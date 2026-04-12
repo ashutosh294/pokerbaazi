@@ -1,69 +1,94 @@
-const CACHE_NAME = 'poker-v1';
+const CACHE_NAME = 'poker-tracker-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/favicon.svg',
-  '/js/config.js',
-  '/js/db.js',
-  '/js/auth.js',
-  '/js/sync.js',
-  '/js/session.js',
-  '/js/settle.js',
-  '/js/stats.js',
-  '/js/trash.js',
-  '/js/ui.js',
+  'https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap'
 ];
 
-// Install — cache static assets
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
+// ─── Install: cache static assets ───────────────────────────────────────────
+self.addEventListener('install', event => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(STATIC_ASSETS).catch(err => {
+        console.warn('[SW] Some assets failed to cache:', err);
+      });
+    })
   );
 });
 
-// Activate — remove old caches
-self.addEventListener('activate', e => {
-  e.waitUntil(
+// ─── Activate: remove old caches ────────────────────────────────────────────
+self.addEventListener('activate', event => {
+  event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys
-        .filter(k => k !== CACHE_NAME)
-        .map(k => caches.delete(k))
+      Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
       )
     ).then(() => self.clients.claim())
   );
 });
 
-// Fetch — cache first for static, network first for API
-self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
+// ─── Fetch: strategy based on request type ──────────────────────────────────
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
 
-  // Supabase API — network first, no cache
-  if (url.hostname.includes('supabase.co')) {
-    e.respondWith(
-      fetch(e.request).catch(() =>
-        new Response(JSON.stringify({ error: 'offline' }), {
-          headers: { 'Content-Type': 'application/json' }
-        })
-      )
+  // Skip non-GET requests
+  if (request.method !== 'GET') return;
+
+  // Skip Supabase / API calls — always go to network
+  if (
+    url.hostname.includes('supabase.co') ||
+    url.pathname.startsWith('/rest/') ||
+    url.pathname.startsWith('/realtime/')
+  ) {
+    return;
+  }
+
+  // Google Fonts — cache first
+  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(
+      caches.match(request).then(cached => {
+        if (cached) return cached;
+        return fetch(request).then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          return response;
+        });
+      })
     );
     return;
   }
 
-  // Static assets — cache first
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(res => {
-        // Cache successful GET responses
-        if (e.request.method === 'GET' && res.status === 200) {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+  // App shell (HTML, JS, CSS, SVG) — network first, fallback to cache
+  event.respondWith(
+    fetch(request)
+      .then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
         }
-        return res;
-      }).catch(() => caches.match('/index.html'));
-    })
+        return response;
+      })
+      .catch(() => {
+        return caches.match(request).then(cached => {
+          if (cached) return cached;
+          // Fallback: serve index.html for navigation requests
+          if (request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+        });
+      })
   );
+});
+
+// ─── Message: force update from client ──────────────────────────────────────
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
