@@ -230,7 +230,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
   <div class="sl">Who's playing?</div>
   <div class="ptl" id="ptogl"></div>
   <hr class="dv">
-  <div class="ch"><span>Player</span><span>buyins</span><span>Result &#8377;</span></div>
+  <div class="ch"><span>Player</span><span>buyings</span><span>Result &#8377;</span></div>
   <div id="sents"></div>
   <div class="pb"><div><div class="pl">Total Pot</div><div class="ps" id="ptsub"></div></div><div class="pv" id="ptval">&#8377;0</div></div>
   <div class="wb" id="wbox"></div>
@@ -342,7 +342,7 @@ async function loadAll(){
   const [pl,rs,en,st]=await Promise.all([
     sb.get('poker_players?order=created_at.asc&select=id,name,phone,is_active,is_admin,created_at&deleted_at=is.null'),
     sb.get('poker_sessions?order=played_at.desc&select=id,played_at,buying_rate,saved_by&limit=200&deleted_at=is.null'),
-    sb.get('poker_entries?select=session_id,player_name,buyins,result'),
+    sb.get('poker_entries?select=session_id,player_name,buyings,result'),
     sb.get('player_stats_cache?select=*'),
   ]);
   players=pl||[];pStats=st||[];
@@ -421,11 +421,11 @@ function onRateChange(){const r=parseInt(document.getElementById('br').value)||1
 
 function renderBoard(){
   const el=document.getElementById('lbl'),sum=document.getElementById('lbs');if(!el)return;
-  const tp=sessions.reduce((s,ss)=>s+ss.entries.reduce((a,e)=>a+e.buyins,0)*ss.buying_rate,0);
+  const tp=sessions.reduce((s,ss)=>s+ss.entries.reduce((a,e)=>a+e.buyings,0)*ss.buying_rate,0);
   sum.innerHTML=`<div class="sp"><div class="spv">${sessions.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">₹${fmt(tp)}</div><div class="spk">Total pot</div></div><div class="sp"><div class="spv">${players.length}</div><div class="spk">Players</div></div>`;
   if(!pStats.length){el.innerHTML=emp('🃏','Koi session nahi. Khelo!');return;}
   const s=[...pStats].sort((a,b)=>Number(b.net_profit)-Number(a.net_profit));
-  el.innerHTML=s.map((x,i)=>{const net=Number(x.net_profit),cls=net>0?'pos':net<0?'neg':'zero',sg=net>0?'+':'';const md=i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;return`<div class="lbr ${cls}" style="animation-delay:${i*50}ms"><div class="lrk">${md}</div><div class="li"><div class="ln">${esc(x.name)}</div><div class="lm">${x.total_sessions} sessions · ${x.total_buyins} buyins</div></div><div class="lnet ${cls}">${sg}₹${fmt(Math.abs(net))}</div></div>`;}).join('');
+  el.innerHTML=s.map((x,i)=>{const net=Number(x.net_profit),cls=net>0?'pos':net<0?'neg':'zero',sg=net>0?'+':'';const md=i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;return`<div class="lbr ${cls}" style="animation-delay:${i*50}ms"><div class="lrk">${md}</div><div class="li"><div class="ln">${esc(x.name)}</div><div class="lm">${x.total_sessions} sessions · ${x.total_buyings} buyings</div></div><div class="lnet ${cls}">${sg}₹${fmt(Math.abs(net))}</div></div>`;}).join('');
 }
 
 function renderSess(){renderToggs();renderEnts();}
@@ -446,7 +446,7 @@ function renderEnts(){
   if(!sess.a.length){el.innerHTML=`<div class="hint" style="padding:24px 0">Players select karo ↑</div>`;document.getElementById('ptval').textContent='₹0';document.getElementById('ptsub').textContent='';document.getElementById('wbox').style.display='none';return;}
   el.innerHTML=sess.a.map(p=>{const b=sess.b[p]||0,r=sess.r[p]!==undefined?sess.r[p]:'',ep=esc(p);return`<div class="er"><div class="en">${ep}</div><div class="bc"><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,-1)">−</button><span class="bct" id="bc-${ep}">${b}</span><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,1)">+</button></div><input class="ri2" type="number" id="res-${ep}" value="${r}" placeholder="±₹" oninput="onR('${ep}',this.value)"></div>`;}).join('');
   const tot=sess.a.reduce((s,p)=>s+(sess.b[p]||0),0);
-  document.getElementById('ptval').textContent=`₹${fmt(tot*rate)}`;document.getElementById('ptsub').textContent=`${tot} buyins × ₹${rate}`;
+  document.getElementById('ptval').textContent=`₹${fmt(tot*rate)}`;document.getElementById('ptsub').textContent=`${tot} buyings × ₹${rate}`;
   const af=sess.a.length>0&&sess.a.every(p=>sess.r[p]!==''&&sess.r[p]!==undefined);
   const wb=document.getElementById('wbox');
   if(af){const sum=sess.a.reduce((s,p)=>s+Number(sess.r[p]||0),0);if(Math.abs(sum)>1){wb.style.display='block';wb.textContent=`⚠️ Sum = ₹${sum} (₹0 hona chahiye)`;}else wb.style.display='none';}else wb.style.display='none';
@@ -459,10 +459,10 @@ async function doSave(){
   try{
     const rate=parseInt(document.getElementById('br').value)||100;
     sess.a.forEach(p=>{const i=document.getElementById('res-'+esc(p));if(i&&i.value!=='')sess.r[p]=Number(i.value);if(sess.r[p]===''||sess.r[p]===undefined)sess.r[p]=0;});
-    const ents=sess.a.map(p=>({player_name:p,buyins:Math.max(0,Math.min(100,parseInt(sess.b[p])||1)),result:Math.max(-9999999,Math.min(9999999,Number(sess.r[p])||0))}));
+    const ents=sess.a.map(p=>({player_name:p,buyings:Math.max(0,Math.min(100,parseInt(sess.b[p])||1)),result:Math.max(-9999999,Math.min(9999999,Number(sess.r[p])||0))}));
     lst=Date.now();
     await sb.rpc('save_session',{p_buying_rate:rate,p_entries:ents,p_saved_by:cu?.name||'Member'});
-    await logA('session_saved',`${ents.length} players · ₹${ents.reduce((s,e)=>s+e.buyins,0)*rate}`);
+    await logA('session_saved',`${ents.length} players · ₹${ents.reduce((s,e)=>s+e.buyings,0)*rate}`);
     await loadAll();sess={a:[],b:{},r:{}};renderAll();toast('Session saved! 🎉');
   }catch(e){toast('❌ '+e.message);}finally{btn.disabled=false;btn.textContent='💾 Save Session';}
 }
@@ -473,8 +473,8 @@ function renderHist(){
   if(!sessions.length){el.innerHTML=emp('📜','Koi session nahi abhi');return;}
   el.innerHTML=sessions.map((s,i)=>{
     const d=new Date(s.played_at),ds=d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),ts=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-    const pot=s.entries.reduce((a,e)=>a+e.buyins,0)*s.buying_rate;
-    const rows=s.entries.map(e=>{const cls=e.result>0?'pos':e.result<0?'neg':'zero';return`<div class="hr"><span class="hn">${esc(e.player_name)}</span><span class="hbuy">${e.buyins}×</span><span class="hnet ${cls}">${e.result>0?'+':''}₹${fmt(e.result)}</span></div>`;}).join('');
+    const pot=s.entries.reduce((a,e)=>a+e.buyings,0)*s.buying_rate;
+    const rows=s.entries.map(e=>{const cls=e.result>0?'pos':e.result<0?'neg':'zero';return`<div class="hr"><span class="hn">${esc(e.player_name)}</span><span class="hbuy">${e.buyings}×</span><span class="hnet ${cls}">${e.result>0?'+':''}₹${fmt(e.result)}</span></div>`;}).join('');
     const db=canD()?`<button class="ib danger" data-id="${esc(s.id)}" onclick="trSess(this.dataset.id)">🗑</button>`:'';
     return`<div class="hc" style="animation-delay:${i*40}ms"><div class="hh"><div><div class="ht">Session #${sessions.length-i}</div><div class="hm">${ds} · ${ts} · ₹${fmt(pot)} · by ${esc(s.saved_by)}</div></div>${db}</div><div class="hbd">${rows}</div></div>`;
   }).join('');
@@ -495,7 +495,7 @@ function renderSettle(){
   const el=document.getElementById('setbd'),cp=document.getElementById('setcp');if(!el)return;
   if(!sessions.length){el.innerHTML=emp('💸','Koi session nahi abhi');cp.style.display='none';return;}
   const ss=ssrc==='last'?[sessions[0]]:sessions,bal=compBal(ss),tx=minTx(bal);
-  const pot=ss.reduce((s,x)=>s+x.entries.reduce((a,e)=>a+e.buyins,0)*x.buying_rate,0);
+  const pot=ss.reduce((s,x)=>s+x.entries.reduce((a,e)=>a+e.buyings,0)*x.buying_rate,0);
   let h=`<div class="sps"><div class="sp"><div class="spv">₹${fmt(pot)}</div><div class="spk">Pot</div></div><div class="sp"><div class="spv">${ss.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">${tx.length}</div><div class="spk">Payments</div></div></div><div class="sl">Balances</div>`;
   Object.entries(bal).sort((a,b)=>b[1]-a[1]).forEach(([n,a])=>{const cls=a>0?'pos':a<0?'neg':'zero';h+=`<div class="br"><span class="bn2">${esc(n)}</span><span class="ba ${cls}">${a>0?'+':''}₹${fmt(Math.round(a))}</span></div>`;});
   if(!tx.length){h+=`<div class="as">✅ Sab settled!</div>`;cp.style.display='none';}
@@ -525,7 +525,7 @@ function showPS(name){sv='player';sn=name;document.getElementById('str').style.d
 function renderPStat(name){
   const el=document.getElementById('stpb'),db=pStats.find(s=>s.name===name),ps=sessions.filter(s=>s.entries.some(e=>e.player_name===name));
   if(!ps.length||!db){el.innerHTML=emp('🃏','Koi session nahi');return;}
-  const net=Number(db.net_profit),n=Number(db.total_sessions),buy=Number(db.total_buyins),wins=Number(db.wins),losses=Number(db.losses),bw=Number(db.best_session),bl=Number(db.worst_session),avg=Math.round(Number(db.avg_per_session)),wr=n>0?Math.round(wins/n*100):0;
+  const net=Number(db.net_profit),n=Number(db.total_sessions),buy=Number(db.total_buyings),wins=Number(db.wins),losses=Number(db.losses),bw=Number(db.best_session),bl=Number(db.worst_session),avg=Math.round(Number(db.avg_per_session)),wr=n>0?Math.round(wins/n*100):0;
   const res=ps.map(s=>s.entries.find(e=>e.player_name===name)?.result??0),rev=[...res].reverse(),sT=rev[0]>0?'W':'L';
   let streak=0;for(const r of rev){if((r>0&&sT==='W')||(r<0&&sT==='L'))streak++;else break;}
   const dots=res.slice(-10).map(r=>r>0?'<div class="dot win"></div>':r<0?'<div class="dot loss"></div>':'<div class="dot push"></div>').join('');
@@ -536,7 +536,7 @@ function renderPStat(name){
     <div class="scard"><div class="sv gold">${wr}%</div><div class="sk">Win rate</div></div>
     <div class="scard"><div class="sv">${n}</div><div class="sk">Sessions</div></div>
     <div class="scard"><div class="sv ${ac}">${sg(avg)}₹${fmt(Math.abs(avg))}</div><div class="sk">Avg/session</div></div>
-    <div class="scard"><div class="sv">${n>0?(buy/n).toFixed(1):0}</div><div class="sk">Avg buyins</div></div>
+    <div class="scard"><div class="sv">${n>0?(buy/n).toFixed(1):0}</div><div class="sk">Avg buyings</div></div>
     <div class="scard"><div class="sv pos">+₹${fmt(bw)}</div><div class="sk">Best session</div></div>
     <div class="scard"><div class="sv neg">₹${fmt(Math.abs(bl))}</div><div class="sk">Worst session</div></div>
     <div class="scard"><div class="sv">${wins}W · ${losses}L</div><div class="sk">Record</div></div>
@@ -580,13 +580,13 @@ async function renderTrash(){
       const rows=await sb.get('poker_sessions?deleted_at=not.is.null&order=deleted_at.desc&select=id,played_at,buying_rate,saved_by,deleted_at,deleted_by');
       if(!rows?.length){el.innerHTML=emp('✨','Trash khali hai');return;}
       const ids=rows.map(r=>r.id).join(',');
-      const ents=await sb.get(`poker_entries?session_id=in.(${ids})&select=session_id,player_name,buyins,result`);
+      const ents=await sb.get(`poker_entries?session_id=in.(${ids})&select=session_id,player_name,buyings,result`);
       const em={};(ents||[]).forEach(e=>{if(!em[e.session_id])em[e.session_id]=[];em[e.session_id].push(e);});
       el.innerHTML=rows.map((s,i)=>{
         const d=new Date(s.played_at),ds=d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
-        const pot=(em[s.id]||[]).reduce((a,e)=>a+e.buyins,0)*s.buying_rate;
+        const pot=(em[s.id]||[]).reduce((a,e)=>a+e.buyings,0)*s.buying_rate;
         const dd=new Date(s.deleted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-        const r2=(em[s.id]||[]).map(e=>{const cls=e.result>0?'pos':e.result<0?'neg':'zero';return`<div class="hr"><span class="hn">${esc(e.player_name)}</span><span class="hbuy">${e.buyins}×</span><span class="hnet ${cls}">${e.result>0?'+':''}₹${fmt(e.result)}</span></div>`;}).join('');
+        const r2=(em[s.id]||[]).map(e=>{const cls=e.result>0?'pos':e.result<0?'neg':'zero';return`<div class="hr"><span class="hn">${esc(e.player_name)}</span><span class="hbuy">${e.buyings}×</span><span class="hnet ${cls}">${e.result>0?'+':''}₹${fmt(e.result)}</span></div>`;}).join('');
         return`<div class="trca" style="animation-delay:${i*50}ms"><div class="trh"><div><div class="trt">${ds} · ₹${fmt(pot)} pot</div><div class="trm">🗑 ${dd} by ${esc(s.deleted_by||'Admin')}</div></div><div class="tra"><button class="tbtn res" data-id="${esc(s.id)}" onclick="resSess(this.dataset.id)">♻️</button><button class="tbtn pur" data-id="${esc(s.id)}" onclick="purSess(this.dataset.id)">💥</button></div></div><div class="hbd">${r2}</div></div>`;
       }).join('');
     }else{
