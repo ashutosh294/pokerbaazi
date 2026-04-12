@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poker-tracker-v1';
+const CACHE_NAME = 'poker-tracker-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
