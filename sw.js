@@ -1,94 +1,69 @@
-const CACHE_NAME = 'poker-tracker-v2';
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.svg',
-  'https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap'
-];
+const CACHE_NAME = 'poker-tracker-v3';
 
-// ─── Install: cache static assets ───────────────────────────────────────────
+// HTML aur SW kabhi cache nahi hoga — hamesha network se
+const NEVER_CACHE = ['/index.html', '/', '/sw.js'];
+
+// Sirf fonts cache hongi
+const CACHE_ONLY = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
 self.addEventListener('install', event => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(STATIC_ASSETS).catch(err => {
-        console.warn('[SW] Some assets failed to cache:', err);
-      });
-    })
-  );
+  self.skipWaiting(); // Turant activate ho
 });
 
-// ─── Activate: remove old caches ────────────────────────────────────────────
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys.map(k => caches.delete(k)))) // Sab purane cache delete
+      .then(() => self.clients.claim())
   );
 });
 
-// ─── Fetch: strategy based on request type ──────────────────────────────────
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Skip Supabase / API calls — always go to network
-  if (
-    url.hostname.includes('supabase.co') ||
-    url.pathname.startsWith('/rest/') ||
-    url.pathname.startsWith('/realtime/')
-  ) {
+  // Supabase — hamesha network
+  if (url.hostname.includes('supabase.co')) return;
+
+  // HTML files — hamesha network, kabhi cache nahi
+  if (NEVER_CACHE.includes(url.pathname) || request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => caches.match('/index.html'))
+    );
     return;
   }
 
-  // Google Fonts — cache first
-  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+  // Fonts — cache first
+  if (CACHE_ONLY.some(h => url.hostname.includes(h))) {
     event.respondWith(
       caches.match(request).then(cached => {
         if (cached) return cached;
-        return fetch(request).then(response => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-          return response;
+        return fetch(request).then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(request, clone));
+          return res;
         });
       })
     );
     return;
   }
 
-  // App shell (HTML, JS, CSS, SVG) — network first, fallback to cache
+  // Baaki sab — network first, cache fallback
   event.respondWith(
     fetch(request)
-      .then(response => {
-        if (response && response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+      .then(res => {
+        if (res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(request, clone));
         }
-        return response;
+        return res;
       })
-      .catch(() => {
-        return caches.match(request).then(cached => {
-          if (cached) return cached;
-          // Fallback: serve index.html for navigation requests
-          if (request.mode === 'navigate') {
-            return caches.match('/index.html');
-          }
-        });
-      })
+      .catch(() => caches.match(request))
   );
 });
 
-// ─── Message: force update from client ──────────────────────────────────────
 self.addEventListener('message', event => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
