@@ -191,39 +191,24 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 </style>
 </head>
 <body>
-<div id="loader"><div class="ld-icon">&#9824;</div><div class="ld-title">POKER</div><div class="ld-bar"><div class="ld-prog"></div></div></div>
+<div id="loader"><div class="ld-icon">&#9824;</div><div class="ld-title">POKER 🂠</div><div class="ld-bar"><div class="ld-prog"></div></div></div>
 
 <div class="mo" id="lm">
   <div class="ms">
-    <div class="ll"><div class="lli">&#9824;</div><div class="lln">POKER TRACKER</div></div>
-    <!-- Step 1: Phone -->
-    <div id="lstep1">
-      <div class="msub">Apna registered number daalo</div>
-      <div class="pw"><div class="pp">+91</div><input class="pi" type="tel" id="phi" maxlength="10" placeholder="10-digit number" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <div class="le" id="lerr"></div>
-      <button class="btn bp bf" onclick="doLogin()" id="lbtn">Continue &rarr;</button>
-      <div style="margin-top:10px;text-align:center"><button class="lob" onclick="viewOnly()">Sirf dekhna hai &rarr;</button></div>
-    </div>
-    <!-- Step 2: Player PIN -->
-    <div id="lstep2" style="display:none">
-      <div class="msub" id="lstep2name">PIN daalo</div>
-      <div class="pdots" id="lpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
-      <div class="ppad" id="lppad"></div>
-      <div class="pe" id="lperr"></div>
-      <!-- First time PIN set -->
-      <div id="lpin_setup" style="display:none;margin-top:12px;text-align:center">
-        <div style="font-size:12px;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-bottom:8px">Pehli baar hai — apna naya PIN set karo</div>
-      </div>
-      <button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="backToPhone()">&#8592; Wapas</button>
-    </div>
+    <div class="ll"><div class="lli">&#9824;</div><div class="lln">POKER TRACKER 🂠</div></div>
+    <div class="msub">Ante up — apna number daalo</div>
+    <div class="pw"><div class="pp">+91</div><input class="pi" type="tel" id="phi" maxlength="10" placeholder="10-digit number" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="le" id="lerr"></div>
+    <button class="btn bp bf" onclick="doLogin()" id="lbtn">I'm In →</button>
+    <div style="margin-top:10px;text-align:center"><button class="lob" onclick="viewOnly()">Rail Bird mode →</button></div>
   </div>
 </div>
 
 <div class="mo" id="pm">
   <div class="ms">
     <div class="mh"></div>
-    <div class="mt">&#128272; Admin PIN</div>
-    <div class="msub">Admin verify karne ke liye PIN daalo</div>
+    <div class="mt">🔐 Admin PIN</div>
+    <div class="msub">High roller access ke liye PIN daalo</div>
     <div class="pdots" id="pdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
     <div class="ppad" id="ppad"></div>
     <div class="pe" id="perr"></div>
@@ -231,115 +216,89 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
   </div>
 </div>
 
-<div id="ob">&#128245; Offline &mdash; cached data dikhaya ja raha hai</div>
+<div id="ob">📵 Offline — cached cards dikhaye ja rahe hain</div>
 <div id="ub"><div><span id="un"></span><span id="urol" style="color:var(--sub);font-size:11px;margin-left:6px"></span></div><button class="lob" onclick="doLogout()">Logout</button></div>
 <div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div>
 
 <div id="tab-board" class="tab active">
-  <div class="sl">Standings</div>
+  <div class="sl">🏆 Chip Leaders</div>
   <div class="sps" id="lbs"></div>
   <div id="lbl"></div>
 </div>
 
 <div id="tab-session" class="tab">
-  <div class="sl">Who's playing?</div>
+  <div class="sl">🃏 Who's in the game?</div>
   <div class="ptl" id="ptogl"></div>
   <hr class="dv">
-  <div class="ch"><span>Player</span><span>Buyings</span><span>Result &#8377;</span></div>
+  <div class="ch"><span>Player</span><span>Buy-ins</span><span>Stack &#8377;</span></div>
   <div id="sents"></div>
-  <div class="pb"><div><div class="pl">Total Pot</div><div class="ps" id="ptsub"></div></div><div class="pv" id="ptval">&#8377;0</div></div>
+  <div class="pb"><div><div class="pl">🎰 Total Pot</div><div class="ps" id="ptsub"></div></div><div class="pv" id="ptval">&#8377;0</div></div>
   <div class="wb" id="wbox"></div>
   <div class="sbs">
-    <button class="btn bg" onclick="doSave()" id="svbtn">&#128190; Save Session</button>
-    <button class="btn bo" onclick="doReset()">&#8634; Reset</button>
+    <button class="btn bg" onclick="doSave()" id="svbtn">✅ Ship It!</button>
+    <button class="btn bo" onclick="doReset()">🔄 Muck Hand</button>
   </div>
 </div>
 
 <div id="tab-history" class="tab">
-  <div class="sl">Past sessions</div>
+  <div class="sl">📜 Hand History</div>
   <div id="histl"></div>
 </div>
 
 <div id="tab-settle" class="tab">
-  <div class="sl">Settlement</div>
-  <div class="sc"><button class="sb active" id="stl" onclick="setSSrc('last')">Last Session</button><button class="sb" id="sta" onclick="setSSrc('all')">All Time</button></div>
+  <div class="sl">💰 Chip Settlement</div>
+  <div class="sc"><button class="sb active" id="stl" onclick="setSSrc('last')">Last Hand</button><button class="sb" id="sta" onclick="setSSrc('all')">All Time</button></div>
   <div id="setbd"></div>
-  <div id="setcp" style="display:none;margin-top:12px"><button class="btn bo bf" onclick="copySettle()">&#128203; Copy for WhatsApp</button></div>
+  <div id="setcp" style="display:none;margin-top:12px"><button class="btn bo bf" onclick="copySettle()">📲 Copy for WhatsApp</button></div>
 </div>
 
 <div id="tab-stats" class="tab">
-  <div id="str"><div class="sl">Rankings</div><div id="strl"></div><hr class="dv"><div class="sl">P&amp;L Trend</div><div class="gpb" id="gpbtns"></div><div class="gw"><canvas id="pc" height="200"></canvas></div><div class="glr" id="gleg"></div></div>
+  <div id="str"><div class="sl">🏅 Rankings</div><div id="strl"></div><hr class="dv"><div class="sl">📈 P&L Trend</div><div class="gpb" id="gpbtns"></div><div class="gw"><canvas id="pc" height="200"></canvas></div><div class="glr" id="gleg"></div></div>
   <div id="stp" style="display:none"><button class="bkb" onclick="showRanking()">&#8592; Rankings</button><div id="stpb"></div></div>
 </div>
 
 <div id="tab-trash" class="tab">
-  <div class="sl">&#128465; Recycle Bin</div>
-  <div class="trseg"><button class="trsb active" id="tts" onclick="setTTab('sessions')">Sessions</button><button class="trsb" id="ttp" onclick="setTTab('players')">Players</button></div>
+  <div class="sl">🗑 Muck Pile</div>
+  <div class="trseg"><button class="trsb active" id="tts" onclick="setTTab('sessions')">Hands</button><button class="trsb" id="ttp" onclick="setTTab('players')">Players</button></div>
   <div id="trbd"></div>
 </div>
 
 <div id="tab-more" class="tab">
   <div id="admsec" style="display:none">
-    <div class="sl">Players manage karo</div>
+    <div class="sl">🎭 Roster manage karo</div>
     <div class="ar">
-      <input type="text"  class="finp" id="npn" placeholder="Naam..."  maxlength="30" style="flex:1">
+      <input type="text"  class="finp" id="npn" placeholder="Player naam..."  maxlength="30" style="flex:1">
       <input type="tel"   class="finp" id="npp" placeholder="Phone..."  maxlength="10" inputmode="numeric" style="width:130px;flex:none">
       <button class="btn bg bsm" onclick="doAddP()">Add</button>
     </div>
     <div id="plist"></div>
     <hr class="dv">
   </div>
-  <!-- PIN Reset Modal -->
-  <div class="mo" id="pinresetm">
-    <div class="ms">
-      <div class="mh"></div>
-      <div class="mt">&#128272; PIN Reset</div>
-      <div class="msub" id="pinresetname">Player ka PIN reset karo</div>
-      <div class="pdots" id="prpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
-      <div class="ppad" id="prppad"></div>
-      <div class="pe" id="prperr"></div>
-      <div style="font-size:11px;color:var(--sub);text-align:center;margin-top:8px;font-family:'JetBrains Mono',monospace">Naya PIN set karo is player ke liye</div>
-      <button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="closePinReset()">Cancel</button>
-    </div>
-  </div>
-  <!-- PIN Reset Modal -->
-  <div class="mo" id="pinresetm">
-    <div class="ms">
-      <div class="mh"></div>
-      <div class="mt">&#128272; PIN Reset</div>
-      <div class="msub" id="pinresetname">Player ka PIN reset karo</div>
-      <div class="pdots" id="prpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
-      <div class="ppad" id="prppad"></div>
-      <div class="pe" id="prperr"></div>
-      <div style="font-size:11px;color:var(--sub);text-align:center;margin-top:8px;font-family:'JetBrains Mono',monospace">Naya PIN set karo is player ke liye</div>
-      <button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="closePinReset()">Cancel</button>
-    </div>
-  </div>
-  <div class="sl">Info</div>
+  <div class="sl">📋 Table Info</div>
   <div class="bi"><div id="mstats">&#8212;</div><div>Device: <strong id="mdev" style="font-size:10px;word-break:break-all">&#8212;</strong></div></div>
-  <div class="sl" style="margin-top:4px">Backup</div>
+  <div class="sl" style="margin-top:4px">💾 Backup</div>
   <div style="display:flex;flex-direction:column;gap:8px">
-    <button class="btn bo bf" onclick="expBk()">&#128228; Export JSON</button>
-    <button class="btn bo bf" onclick="document.getElementById('impf').click()">&#128229; Import Backup</button>
+    <button class="btn bo bf" onclick="expBk()">📤 Export Deck</button>
+    <button class="btn bo bf" onclick="document.getElementById('impf').click()">📥 Import Backup</button>
     <input type="file" id="impf" accept=".json" style="display:none" onchange="impBk(this)">
-    <button class="btn bd bf" id="rstbtn" style="display:none" onclick="doRstAll()">&#128465; Reset All Data</button>
+    <button class="btn bd bf" id="rstbtn" style="display:none" onclick="doRstAll()">💥 Burn It All</button>
   </div>
 </div>
 
 <div id="tab-activity" class="tab">
-  <div class="sl">Activity log <span style="color:var(--dim);font-size:9px">(7 din baad auto-delete)</span></div>
+  <div class="sl">🔍 Tell Log <span style="color:var(--dim);font-size:9px">(7 din baad fold)</span></div>
   <div id="actl"></div>
 </div>
 
 <nav class="bn">
-  <button class="nb active" onclick="sw('board')"    id="nav-board">   <div class="ni">&#127942;</div><div class="nl">Board</div></button>
-  <button class="nb"        onclick="sw('session')"  id="nav-session">  <div class="ni">&#127183;</div><div class="nl">Play</div></button>
-  <button class="nb"        onclick="sw('history')"  id="nav-history">  <div class="ni">&#128220;</div><div class="nl">History</div></button>
-  <button class="nb"        onclick="sw('settle')"   id="nav-settle">   <div class="ni">&#128184;</div><div class="nl">Settle</div></button>
+  <button class="nb active" onclick="sw('board')"    id="nav-board">   <div class="ni">&#127942;</div><div class="nl">Felt</div></button>
+  <button class="nb"        onclick="sw('session')"  id="nav-session">  <div class="ni">&#127183;</div><div class="nl">Deal</div></button>
+  <button class="nb"        onclick="sw('history')"  id="nav-history">  <div class="ni">&#128220;</div><div class="nl">Hands</div></button>
+  <button class="nb"        onclick="sw('settle')"   id="nav-settle">   <div class="ni">&#128184;</div><div class="nl">Chips</div></button>
   <button class="nb"        onclick="sw('stats')"    id="nav-stats">    <div class="ni">&#128202;</div><div class="nl">Stats</div></button>
-  <button class="nb"        onclick="sw('trash')"    id="nav-trash">    <div class="ni">&#128465;</div><div class="nl">Trash</div></button>
+  <button class="nb"        onclick="sw('trash')"    id="nav-trash">    <div class="ni">&#128465;</div><div class="nl">Muck</div></button>
   <button class="nb"        onclick="sw('more')"     id="nav-more">     <div class="ni">&#9881;&#65039;</div><div class="nl">More</div></button>
-  <button class="nb"        onclick="sw('activity')" id="nav-activity"> <div class="ni">&#128203;</div><div class="nl">Log</div></button>
+  <button class="nb"        onclick="sw('activity')" id="nav-activity"> <div class="ni">&#128203;</div><div class="nl">Tells</div></button>
 </nav>
 <div class="toast" id="toast"></div>
 
@@ -349,7 +308,7 @@ const SB_URL    = 'https://ysooqusetyjvoxggizcv.supabase.co';
 const SB_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzb29xdXNldHlqdm94Z2dpemN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5ODc2NzAsImV4cCI6MjA5MTU2MzY3MH0.uhhGCJpoUmZewLY9n198a-ehuu5F0kGwsXnxApG1W_Q';
 const ADMIN_PIN = '2025'; // ← Apna PIN yahan set karo
 
-const CK='pk_v2_c',AK='pk_v2_a',DK='pk_v2_d',RK='pk_v2_r',TIMEOUT_MS=7*24*60*60*1000,LAST_ACTIVE_KEY='pk_v2_la';
+const CK='pk_v2_c',AK='pk_v2_a',DK='pk_v2_d',RK='pk_v2_r';
 const GC=['#e07b39','#3b82f6','#22c55e','#a855f7','#ef4444','#eab308','#06b6d4','#f97316'];
 const AM={session_saved:{i:'✅',l:'Session saved',c:'#22c55e'},session_deleted:{i:'🗑',l:'Session trashed',c:'#ef4444'},session_restored:{i:'♻️',l:'Session restored',c:'#22c55e'},session_purged:{i:'💥',l:'Session deleted',c:'#ef4444'},player_added:{i:'➕',l:'Player added',c:'#eab308'},player_deleted:{i:'🗑',l:'Player trashed',c:'#ef4444'},player_restored:{i:'♻️',l:'Player restored',c:'#22c55e'},player_purged:{i:'💥',l:'Player deleted',c:'#ef4444'},player_activated:{i:'✅',l:'Player activated',c:'#22c55e'},player_deactivated:{i:'💤',l:'Player deactivated',c:'#94a3b8'},data_reset:{i:'💥',l:'Data reset',c:'#ef4444'}};
 
@@ -391,188 +350,42 @@ async function loadAll(){
   sessions=(rs||[]).map(s=>({...s,entries:em[s.id]||[]}));
   saveC();
 }
-function saveC(){try{localStorage.setItem(CK,JSON.stringify({players,sessions,pStats,at:Date.now()}));if(cu)bumpActive();}catch{}}
+function saveC(){try{localStorage.setItem(CK,JSON.stringify({players,sessions,pStats,at:Date.now()}));}catch{}}
 function loadC(){try{const d=JSON.parse(localStorage.getItem(CK)||'{}');players=d.players||[];sessions=d.sessions||[];pStats=d.pStats||[];return true;}catch{return false;}}
 async function logA(action,detail=''){try{await sb.post('poker_activity',{action,done_by:cu?.name||'System',detail});}catch{}}
 async function cleanLogs(){try{await sb.rpc('cleanup_old_logs',{});}catch{}}
 
 function loadAC(){
-  try{
-    const s=JSON.parse(localStorage.getItem(AK)||'{}');
-    if(s.deviceId!==getDev()){localStorage.removeItem(AK);return false;}
-    // Inactivity timeout check — 7 din
-    const la=parseInt(localStorage.getItem(LAST_ACTIVE_KEY)||'0');
-    if(la && Date.now()-la > TIMEOUT_MS){localStorage.removeItem(AK);localStorage.removeItem(LAST_ACTIVE_KEY);return false;}
-    cu=s.user||null;isAdm=s.isAdm||false;isMem=s.isMem||false;
-    return!!cu;
-  }catch{return false;}
+  try{const s=JSON.parse(localStorage.getItem(AK)||'{}');if(s.deviceId!==getDev()){localStorage.removeItem(AK);return false;}cu=s.user||null;isAdm=s.isAdm||false;isMem=s.isMem||false;return!!cu;}catch{return false;}
 }
-function saveAC(){localStorage.setItem(AK,JSON.stringify({deviceId:getDev(),user:cu,isAdm,isMem}));bumpActive();}
-function clearAC(){localStorage.removeItem(AK);localStorage.removeItem(LAST_ACTIVE_KEY);cu=null;isAdm=false;isMem=false;}
-function bumpActive(){localStorage.setItem(LAST_ACTIVE_KEY,Date.now().toString());}
+function saveAC(){localStorage.setItem(AK,JSON.stringify({deviceId:getDev(),user:cu,isAdm,isMem}));}
+function clearAC(){localStorage.removeItem(AK);cu=null;isAdm=false;isMem=false;}
 
-// ── Login Step 1: phone check ──────────────────────────────────────
-let _loginPhone='',_loginPending=null,_lpb='',_lpAttempts=0,_lpIsNew=false,_lpConfirm='';
 async function doLogin(){
   const ph=document.getElementById('phi').value.trim();
   const er=document.getElementById('lerr'),btn=document.getElementById('lbtn');
   if(!/^\d{10}$/.test(ph)){er.textContent='10-digit number daalo';return;}
   er.textContent='';btn.disabled=true;btn.textContent='Checking...';
   try{
-    const res=await sb.rpc('player_login_check',{p_phone:ph,p_device_id:getDev()});
+    const res=await sb.rpc('player_login',{p_phone:ph,p_device_id:getDev()});
     if(!res?.success){
       if(res?.error==='not_found')throw new Error('Yeh number registered nahi. Admin se contact karo.');
-      if(res?.error==='already_logged_in'){
-        const ok=confirm('⚠️ Yeh account kisi aur device pe login hai.\n\nFir bhi is device pe login karna chahte ho?');
-        if(!ok){er.textContent='Login cancel kiya.';return;}
-        const fr=await sb.rpc('player_login_check',{p_phone:ph,p_device_id:getDev(),p_force:true});
-        if(!fr?.success)throw new Error('Login fail hua.');
-        _loginPending=fr;
-      } else throw new Error('Login fail hua. Dobara try karo.');
-    } else _loginPending=res;
-    // Show PIN step
-    _loginPhone=ph;_lpb='';_lpAttempts=0;
-    _lpIsNew=!_loginPending.has_pin;
-    _lpConfirm='';
-    document.getElementById('lstep1').style.display='none';
-    document.getElementById('lstep2').style.display='block';
-    document.getElementById('lstep2name').textContent=`Welcome, ${esc(_loginPending.name)} 👋`;
-    document.getElementById('lpin_setup').style.display=_lpIsNew?'block':'none';
-    document.getElementById('lperr').textContent='';
-    updLPD();buildLPPad();
+      if(res?.error==='already_logged_in')throw new Error('Already kisi aur device pe login hai. Pehle wahan logout karo.');
+      throw new Error('Login fail hua. Dobara try karo.');
+    }
+    cu={id:res.id,name:res.name,is_admin:res.is_admin};isMem=true;isAdm=false;saveAC();
+    document.getElementById('lm').classList.remove('show');
+    updateUB();
+    if(res.is_admin){pb='';updPD();document.getElementById('perr').textContent='';document.getElementById('pm').classList.add('show');}
+    renderAll();toast(`Welcome ${esc(res.name)}! 🎉`);
   }catch(e){er.textContent=e.message;}
   finally{btn.disabled=false;btn.textContent='Continue →';}
 }
-function backToPhone(){
-  document.getElementById('lstep1').style.display='block';
-  document.getElementById('lstep2').style.display='none';
-  document.getElementById('lerr').textContent='';
-  _loginPending=null;_lpb='';_lpConfirm='';
-}
-function updLPD(){document.querySelectorAll('#lpdots .pd').forEach((d,i)=>d.classList.toggle('f',i<_lpb.length));}
-function buildLPPad(){
-  const el=document.getElementById('lppad');if(!el)return;el.innerHTML='';
-  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k=>{
-    if(!k){el.appendChild(document.createElement('div'));return;}
-    const b=document.createElement('button');b.className='pk'+(k==='⌫'?' del':'');b.textContent=k;
-    b.onclick=()=>lpp(k);el.appendChild(b);
-  });
-}
-function lpp(v){
-  if(v==='⌫'){_lpb=_lpb.slice(0,-1);updLPD();return;}
-  if(_lpb.length>=4)return;
-  _lpb+=v;updLPD();
-  if(_lpb.length===4)setTimeout(()=>chkLoginPin(),150);
-}
-async function chkLoginPin(){
-  const er=document.getElementById('lperr');
-  if(_lpIsNew){
-    // New PIN flow: first entry → ask confirm
-    if(!_lpConfirm){
-      _lpConfirm=_lpb;_lpb='';updLPD();
-      er.textContent='';
-      document.getElementById('lstep2name').textContent='Dobara daalo — confirm karo';
-      return;
-    }
-    // Confirm step
-    if(_lpb!==_lpConfirm){
-      er.textContent='❌ PIN match nahi kiya! Phir se try karo.';
-      _lpb='';_lpConfirm='';updLPD();
-      document.getElementById('lstep2name').textContent=`Welcome, ${esc(_loginPending.name)} 👋`;
-      return;
-    }
-    // Save new PIN
-    try{
-      await sb.rpc('player_set_pin',{p_phone:_loginPhone,p_pin:_lpConfirm});
-    }catch(e){er.textContent='PIN save nahi hua: '+e.message;_lpb='';_lpConfirm='';updLPD();return;}
-    finishLogin();
-    return;
-  }
-  // Verify existing PIN
-  try{
-    const ok=await sb.rpc('player_verify_pin',{p_phone:_loginPhone,p_pin:_lpb,p_device_id:getDev()});
-    if(!ok?.success){
-      _lpAttempts++;
-      if(_lpAttempts>=3){
-        er.textContent='❌ 3 baar galat PIN. 30 sec wait karo.';
-        document.querySelectorAll('#lppad button').forEach(b=>b.disabled=true);
-        setTimeout(()=>{document.querySelectorAll('#lppad button').forEach(b=>b.disabled=false);_lpAttempts=0;er.textContent='';},30000);
-      } else {
-        er.textContent=`❌ Wrong PIN! (${3-_lpAttempts} try bacha)`;
-      }
-      _lpb='';updLPD();return;
-    }
-    finishLogin();
-  }catch(e){er.textContent='Error: '+e.message;_lpb='';updLPD();}
-}
-function finishLogin(){
-  const res=_loginPending;
-  cu={id:res.id,name:res.name,is_admin:res.is_admin};isMem=true;isAdm=false;saveAC();bumpActive();
-  document.getElementById('lm').classList.remove('show');
-  document.getElementById('lstep1').style.display='block';
-  document.getElementById('lstep2').style.display='none';
-  document.getElementById('phi').value='';
-  updateUB();
-  if(res.is_admin){pb='';updPD();document.getElementById('perr').textContent='';document.getElementById('pm').classList.add('show');}
-  renderAll();toast(`Welcome ${esc(res.name)}! 🎉`);
-  _loginPending=null;_lpb='';_lpConfirm='';
-}
-
-// ── PIN Reset by Admin ──────────────────────────────────────────
-let _prTarget=null,_prb='',_prConfirm='';
-let _prppadBuilt=false;
-function openPinReset(playerId,playerName,playerPhone){
-  if(!isAdm){toast('🔒 Sirf admin');return;}
-  _prTarget={id:playerId,name:playerName,phone:playerPhone};
-  _prb='';_prConfirm='';
-  document.getElementById('pinresetname').textContent=`${esc(playerName)} ka naya PIN set karo`;
-  document.getElementById('prperr').textContent='';
-  updPRD();
-  if(!_prppadBuilt){buildPRPad();_prppadBuilt=true;}
-  document.getElementById('pinresetm').classList.add('show');
-}
-function closePinReset(){document.getElementById('pinresetm').classList.remove('show');_prTarget=null;_prb='';_prConfirm='';}
-function updPRD(){document.querySelectorAll('#prpdots .pd').forEach((d,i)=>d.classList.toggle('f',i<_prb.length));}
-function buildPRPad(){
-  const el=document.getElementById('prppad');if(!el)return;el.innerHTML='';
-  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k=>{
-    if(!k){el.appendChild(document.createElement('div'));return;}
-    const b=document.createElement('button');b.className='pk'+(k==='⌫'?' del':'');b.textContent=k;
-    b.onclick=()=>prp(k);el.appendChild(b);
-  });
-}
-function prp(v){
-  if(v==='⌫'){_prb=_prb.slice(0,-1);updPRD();return;}
-  if(_prb.length>=4)return;
-  _prb+=v;updPRD();
-  if(_prb.length===4)setTimeout(()=>chkPRPin(),150);
-}
-async function chkPRPin(){
-  const er=document.getElementById('prperr');
-  if(!_prConfirm){
-    _prConfirm=_prb;_prb='';updPRD();
-    er.textContent='';
-    document.getElementById('pinresetname').textContent='Confirm karo — dobara daalo';
-    return;
-  }
-  if(_prb!==_prConfirm){
-    er.textContent='❌ PIN match nahi kiya!';
-    _prb='';_prConfirm='';updPRD();
-    document.getElementById('pinresetname').textContent=`${esc(_prTarget.name)} ka naya PIN set karo`;
-    return;
-  }
-  try{
-    await sb.rpc('player_set_pin',{p_phone:_prTarget.phone,p_pin:_prConfirm});
-    toast(`${esc(_prTarget.name)} ka PIN set ho gaya ✓`);
-    closePinReset();
-  }catch(e){er.textContent='Error: '+e.message;_prb='';_prConfirm='';updPRD();}
-}
-
 function viewOnly(){document.getElementById('lm').classList.remove('show');renderAll();}
 async function doLogout(){
-  if(!confirm('Logout karo?'))return;
+  if(!confirm('🚪 Walk away from the table?'))return;
   try{if(cu)await sb.rpc('player_logout',{p_phone:cu.phone,p_device_id:getDev()});}catch{}
-  clearAC();updateUB();renderAll();document.getElementById('lm').classList.add('show');toast('Logged out 👋');
+  clearAC();updateUB();renderAll();document.getElementById('lm').classList.add('show');toast('👋 See ya at the tables!');
 }
 function updateUB(){
   const bar=document.getElementById('ub'),nm=document.getElementById('un'),rol=document.getElementById('urol');
@@ -591,7 +404,7 @@ function pp(v){if(v==='⌫')pb=pb.slice(0,-1);else if(pb.length<4)pb+=v;updPD();
 function updPD(){document.querySelectorAll('#pdots .pd').forEach((d,i)=>d.classList.toggle('f',i<pb.length));}
 function chkPin(){
   if(pb!==ADMIN_PIN){document.getElementById('perr').textContent='❌ Wrong PIN!';pb='';updPD();const m=document.getElementById('ppad');m.style.animation='none';m.offsetHeight;m.style.animation='shake 0.4s ease';return;}
-  isAdm=true;isMem=true;if(!cu)cu={name:'Admin',is_admin:true};saveAC();closePinModal();updateUB();renderMore();document.getElementById('rstbtn').style.display='block';toast('🔓 Admin access mila! 👑');
+  isAdm=true;isMem=true;if(!cu)cu={name:'Admin',is_admin:true};saveAC();closePinModal();updateUB();renderMore();document.getElementById('rstbtn').style.display='block';toast('🔓 High roller access unlocked! 👑');
 }
 function closePinModal(){document.getElementById('pm').classList.remove('show');pb='';updPD();}
 
@@ -610,7 +423,7 @@ function renderBoard(){
   const el=document.getElementById('lbl'),sum=document.getElementById('lbs');if(!el)return;
   const tp=sessions.reduce((s,ss)=>s+ss.entries.reduce((a,e)=>a+e.buyings,0)*ss.buying_rate,0);
   sum.innerHTML=`<div class="sp"><div class="spv">${sessions.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">₹${fmt(tp)}</div><div class="spk">Total pot</div></div><div class="sp"><div class="spv">${players.length}</div><div class="spk">Players</div></div>`;
-  if(!pStats.length){el.innerHTML=emp('🃏','Koi session nahi. Khelo!');return;}
+  if(!pStats.length){el.innerHTML=emp('🎰','No hands played yet. Deal em up!');return;}
   const s=[...pStats].sort((a,b)=>Number(b.net_profit)-Number(a.net_profit));
   el.innerHTML=s.map((x,i)=>{const net=Number(x.net_profit),cls=net>0?'pos':net<0?'neg':'zero',sg=net>0?'+':'';const md=i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;return`<div class="lbr ${cls}" style="animation-delay:${i*50}ms"><div class="lrk">${md}</div><div class="li"><div class="ln">${esc(x.name)}</div><div class="lm">${x.total_sessions} sessions · ${x.total_buyings} buyings</div></div><div class="lnet ${cls}">${sg}₹${fmt(Math.abs(net))}</div></div>`;}).join('');
 }
@@ -623,7 +436,7 @@ function renderToggs(){
   el.innerHTML=act.map(p=>{const on=sess.a.includes(p.name);return`<button class="ptog ${on?'on':''}" data-n="${esc(p.name)}" onclick="togP(this.dataset.n)">${on?'✓ ':''}${esc(p.name)}</button>`;}).join('');
 }
 function togP(name){
-  if(!canW()){toast('🔒 Login karo pehle');return;}
+  if(!canW()){toast('🔒 Ante up first — login karo!');return;}
   if(sess.a.includes(name)){sess.a=sess.a.filter(p=>p!==name);delete sess.b[name];delete sess.r[name];}
   else{sess.a.push(name);sess.b[name]=1;sess.r[name]='';}renderSess();
 }
@@ -641,7 +454,7 @@ function renderEnts(){
 function chgB(n,d){sess.b[n]=Math.max(0,Math.min(100,(sess.b[n]||0)+d));const e=document.getElementById('bc-'+n);if(e)e.textContent=sess.b[n];renderEnts();}
 function onR(n,v){sess.r[n]=v===''?'':Number(v);renderEnts();}
 async function doSave(){
-  if(!canW()){toast('🔒 Login karo pehle');return;}if(!sess.a.length){toast('Koi player select nahi!');return;}
+  if(!canW()){toast('🔒 Ante up first — login karo!');return;}if(!sess.a.length){toast('⚠️ Koi player deal nahi kiya!');return;}
   const btn=document.getElementById('svbtn');btn.disabled=true;btn.textContent='Saving...';
   try{
     const rate=parseInt(document.getElementById('br').value)||100;
@@ -650,10 +463,10 @@ async function doSave(){
     lst=Date.now();
     await sb.rpc('save_session',{p_buying_rate:rate,p_entries:ents,p_saved_by:cu?.name||'Member'});
     await logA('session_saved',`${ents.length} players · ₹${ents.reduce((s,e)=>s+e.buyings,0)*rate}`);
-    await loadAll();sess={a:[],b:{},r:{}};renderAll();toast('Session saved! 🎉');
+    await loadAll();sess={a:[],b:{},r:{}};renderAll();toast('🎉 Hand shipped! GG!');
   }catch(e){toast('❌ '+e.message);}finally{btn.disabled=false;btn.textContent='💾 Save Session';}
 }
-function doReset(){if(!confirm('Current session reset karo?'))return;sess={a:[],b:{},r:{}};renderSess();toast('Reset ✓');}
+function doReset(){if(!confirm('🔄 Muck this hand?'))return;sess={a:[],b:{},r:{}};renderSess();toast('🔄 Hand mucked!');}
 
 function renderHist(){
   const el=document.getElementById('histl');if(!el)return;
@@ -667,7 +480,7 @@ function renderHist(){
   }).join('');
 }
 async function trSess(id){
-  if(!canD()){toast('🔒 Sirf admin');return;}if(!confirm('Session trash mein bhejo?'))return;
+  if(!canD()){toast('🔒 House rules — sirf admin!');return;}if(!confirm('Session trash mein bhejo?'))return;
   try{await sb.patch(`poker_sessions?id=eq.${id}`,{deleted_at:new Date().toISOString(),deleted_by:cu?.name||'Admin'});await logA('session_deleted','Session trashed');await loadAll();renderHist();renderBoard();renderSettle();renderStats();updTrashBadge();toast('Session trash mein gaya 🗑');}catch(e){toast('❌ '+e.message);}
 }
 
@@ -787,44 +600,44 @@ async function updTrashBadge(){
   if(!isAdm)return;
   try{const[s,p]=await Promise.all([sb.get('poker_sessions?deleted_at=not.is.null&select=id'),sb.get('poker_players?deleted_at=not.is.null&select=id')]);const total=(s?.length||0)+(p?.length||0);const nb=document.getElementById('nav-trash');if(!nb)return;let b=nb.querySelector('.nbadge');if(total>0){if(!b){b=document.createElement('span');b.className='nbadge';nb.appendChild(b);}b.textContent=total;}else b?.remove();}catch{}
 }
-async function resSess(id){if(!confirm('Restore karo?'))return;try{await sb.patch(`poker_sessions?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('session_restored','Session restored');await loadAll();renderTrash();renderHist();renderBoard();updTrashBadge();toast('Restored ♻️');}catch(e){toast('❌ '+e.message);}}
-async function purSess(id){if(!confirm('⚠️ Permanently delete? Wapas nahi aayega!'))return;try{await sb.del(`poker_entries?session_id=eq.${id}`);await sb.del(`poker_sessions?id=eq.${id}`);await logA('session_purged','Permanently deleted');renderTrash();updTrashBadge();toast('Deleted 💥');}catch(e){toast('❌ '+e.message);}}
-async function resPlay(id,name){if(!confirm(`"${name}" restore karo?`))return;try{await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('player_restored',name);await loadAll();renderTrash();renderMore();updTrashBadge();toast('Restored ♻️');}catch(e){toast('❌ '+e.message);}}
-async function purPlay(id,name){if(!confirm(`⚠️ "${name}" permanently delete? Wapas nahi aayega!`))return;try{await sb.del(`poker_players?id=eq.${id}`);await logA('player_purged',name);renderTrash();updTrashBadge();toast('Deleted 💥');}catch(e){toast('❌ '+e.message);}}
+async function resSess(id){if(!confirm('♻️ Wapas table pe bulao?'))return;try{await sb.patch(`poker_sessions?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('session_restored','Session restored');await loadAll();renderTrash();renderHist();renderBoard();updTrashBadge();toast('♻️ Back in the game!');}catch(e){toast('❌ '+e.message);}}
+async function purSess(id){if(!confirm('💥 Permanently muck karo? No re-buy!'))return;try{await sb.del(`poker_entries?session_id=eq.${id}`);await sb.del(`poker_sessions?id=eq.${id}`);await logA('session_purged','Permanently deleted');renderTrash();updTrashBadge();toast('💥 Permanently mucked!');}catch(e){toast('❌ '+e.message);}}
+async function resPlay(id,name){if(!confirm(`♻️ "${name}" ko wapas game mein laao?`))return;try{await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('player_restored',name);await loadAll();renderTrash();renderMore();updTrashBadge();toast('♻️ Back in the game!');}catch(e){toast('❌ '+e.message);}}
+async function purPlay(id,name){if(!confirm(`💥 "${name}" permanently fold? No re-buy!`))return;try{await sb.del(`poker_players?id=eq.${id}`);await logA('player_purged',name);renderTrash();updTrashBadge();toast('💥 Permanently mucked!');}catch(e){toast('❌ '+e.message);}}
 
 function renderMore(){
-  renderPList();document.getElementById('mstats').textContent=`${players.length} players · ${sessions.length} sessions`;document.getElementById('mdev').textContent=getDev();
+  renderPList();document.getElementById('mstats').textContent=`${players.length} players at the table · ${sessions.length} hands played`;document.getElementById('mdev').textContent=getDev();
   document.getElementById('admsec').style.display=isAdm?'block':'none';if(isAdm)document.getElementById('rstbtn').style.display='block';
 }
 function renderPList(){
   const el=document.getElementById('plist');if(!el)return;
   const act=players.filter(p=>p.is_active!==false),inact=players.filter(p=>p.is_active===false);
   let h='';
-  if(act.length){h+=`<div class="sl">Active</div>`;h+=act.map(p=>`<div class="plr"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="deactP(this.dataset.id,this.dataset.n)">Deactivate</button><button class="smb" style="background:var(--gold-bg);color:var(--gold);border-color:rgba(200,146,42,0.3)" data-id="${esc(p.id)}" data-n="${esc(p.name)}" data-ph="${esc(p.phone)}" onclick="openPinReset(this.dataset.id,this.dataset.n,this.dataset.ph)">PIN</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button></div>`:''}</div>`).join('');}
-  if(inact.length){h+=`<div class="sl" style="margin-top:16px">Inactive</div>`;h+=inact.map(p=>`<div class="plr in"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb g" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="actP(this.dataset.id,this.dataset.n)">Activate</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button></div>`:''}</div>`).join('');}
-  if(!h)h=emp('👤','Koi player nahi. Add karo!');el.innerHTML=h;
+  if(act.length){h+=`<div class="sl">🟢 Active Players</div>`;h+=act.map(p=>`<div class="plr"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="deactP(this.dataset.id,this.dataset.n)">Deactivate</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button></div>`:''}</div>`).join('');}
+  if(inact.length){h+=`<div class="sl" style="margin-top:16px">💤 Sat Out</div>`;h+=inact.map(p=>`<div class="plr in"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb g" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="actP(this.dataset.id,this.dataset.n)">Activate</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button></div>`:''}</div>`).join('');}
+  if(!h)h=emp('🪑','No players at the table. Add karo!');el.innerHTML=h;
 }
 async function doAddP(){
-  if(!isAdm){toast('🔒 Sirf admin');return;}
+  if(!isAdm){toast('🔒 House rules — sirf admin!');return;}
   const name=document.getElementById('npn').value.trim(),phone=document.getElementById('npp').value.trim();
-  if(!name||name.length>30){toast('Naam 1-30 characters');return;}if(!/^\d{10}$/.test(phone)){toast('10-digit phone daalo');return;}if(players.find(p=>p.phone===phone)){toast('Yeh number already registered hai');return;}
-  try{await sb.post('poker_players',{name,phone});await logA('player_added',`${name} (${phone})`);await loadAll();document.getElementById('npn').value='';document.getElementById('npp').value='';renderPList();renderBoard();renderSess();toast(`${esc(name)} added ✓`);}catch(e){toast('❌ '+e.message);}
+  if(!name||name.length>30){toast('✍️ Naam 1-30 characters');return;}if(!/^\d{10}$/.test(phone)){toast('📱 10-digit number daalo');return;}if(players.find(p=>p.phone===phone)){toast('⚠️ Yeh player already table pe hai!');return;}
+  try{await sb.post('poker_players',{name,phone});await logA('player_added',`${name} (${phone})`);await loadAll();document.getElementById('npn').value='';document.getElementById('npp').value='';renderPList();renderBoard();renderSess();toast(`🃏 ${esc(name)} is in the game!`);}catch(e){toast('❌ '+e.message);}
 }
-async function actP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:true});await logA('player_activated',name);await loadAll();renderPList();renderSess();toast(`${esc(name)} activated ✓`);}catch(e){toast('❌ '+e.message);}}
-async function deactP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:false});await logA('player_deactivated',name);await loadAll();renderPList();renderSess();toast(`${esc(name)} deactivated`);}catch(e){toast('❌ '+e.message);}}
-async function trPlay(id,name){if(!confirm(`"${name}" ko trash mein bhejo?`))return;try{await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:new Date().toISOString(),deleted_by:cu?.name||'Admin',device_id:null});await logA('player_deleted',name);await loadAll();renderPList();updTrashBadge();toast(`${esc(name)} trash mein gaya 🗑`);}catch(e){toast('❌ '+e.message);}}
+async function actP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:true});await logA('player_activated',name);await loadAll();renderPList();renderSess();toast(`✅ ${esc(name)} is back at the table!`);}catch(e){toast('❌ '+e.message);}}
+async function deactP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:false});await logA('player_deactivated',name);await loadAll();renderPList();renderSess();toast(`💤 ${esc(name)} sat out!`);}catch(e){toast('❌ '+e.message);}}
+async function trPlay(id,name){if(!confirm(`"${name}" ko muck pile mein bhejo?`))return;try{await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:new Date().toISOString(),deleted_by:cu?.name||'Admin',device_id:null});await logA('player_deleted',name);await loadAll();renderPList();updTrashBadge();toast(`🗑 ${esc(name)} got bounced!`);}catch(e){toast('❌ '+e.message);}}
 
-function expBk(){const b=new Blob([JSON.stringify({players,sessions},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`poker-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('Backup downloaded 💾');}
-function impBk(input){const f=input.files[0];if(!f)return;if(!confirm('⚠️ Import karo? Data overwrite hoga'))return;const r=new FileReader();r.onload=e=>{try{JSON.parse(e.target.result);toast('Restored ✅');}catch{toast('❌ Invalid file');}input.value='';};r.readAsText(f);}
+function expBk(){const b=new Blob([JSON.stringify({players,sessions},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`poker-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('💾 Deck exported!');}
+function impBk(input){const f=input.files[0];if(!f)return;if(!confirm('⚠️ Import karo? Current deck overwrite hoga'))return;const r=new FileReader();r.onload=e=>{try{JSON.parse(e.target.result);toast('✅ Back in action!');}catch{toast('❌ Invalid file');}input.value='';};r.readAsText(f);}
 async function doRstAll(){
-  if(!isAdm)return;if(!confirm('⚠️ SAARA DATA DELETE HOGA! Pakka?'))return;if(!confirm('Last chance — Wapas nahi aayega!'))return;
-  try{await sb.del('poker_entries?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_sessions?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_players?id=neq.00000000-0000-0000-0000-000000000000');await logA('data_reset','All data wiped');localStorage.removeItem(CK);await loadAll();renderAll();updTrashBadge();toast('All data deleted 🗑');}catch(e){toast('❌ '+e.message);}
+  if(!isAdm)return;if(!confirm('⚠️ FULL WIPE — Table reset hoga! All-in confirm?'))return;if(!confirm('Last chance — No re-buy possible!'))return;
+  try{await sb.del('poker_entries?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_sessions?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_players?id=neq.00000000-0000-0000-0000-000000000000');await logA('data_reset','All data wiped');localStorage.removeItem(CK);await loadAll();renderAll();updTrashBadge();toast('💥 Table wiped clean!');}catch(e){toast('❌ '+e.message);}
 }
 
 async function renderActivity(){
   const el=document.getElementById('actl');if(!el)return;
   try{const rows=await sb.get('poker_activity?order=created_at.desc&limit=50&select=*');
-    if(!rows?.length){el.innerHTML=emp('📋','Koi activity nahi abhi');return;}
+    if(!rows?.length){el.innerHTML=emp('🤫','No tells yet...');return;}
     el.innerHTML=rows.map(r=>{const m=AM[r.action]||{i:'•',l:r.action,c:'#94a3b8'};return`<div class="actrow"><div class="actico" style="color:${m.c}">${m.i}</div><div class="acti"><div class="actl2">${m.l} <span class="actd">${esc(r.detail)}</span></div><div class="actm">by <strong>${esc(r.done_by)}</strong> · ${tago(r.created_at)}</div></div></div>`;}).join('');
   }catch(e){el.innerHTML=`<div style="color:var(--red);font-size:12px">Error: ${e.message}</div>`;}
 }
@@ -833,21 +646,10 @@ function setupRT(){
   if(!SB_URL)return;
   const ws=new WebSocket(SB_URL.replace('https://','wss://')+'/realtime/v1/websocket?apikey='+SB_KEY+'&vsn=1.0.0');
   ws.onopen=()=>{ws.send(JSON.stringify({topic:'realtime:poker',event:'phx_join',payload:{config:{broadcast:{self:false},postgres_changes:[{event:'*',schema:'public',table:'poker_sessions'},{event:'*',schema:'public',table:'poker_entries'},{event:'*',schema:'public',table:'poker_players'}]}},ref:'1'}));setSync('on');};
-  ws.onmessage=async msg=>{const d=JSON.parse(msg.data);if(d.event==='heartbeat'){ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:null}));return;}if(d.event==='postgres_changes'||d.payload?.data){const self=(Date.now()-lst)<3000;await loadAll();renderAll();updTrashBadge();if(!self)toast('🔄 Data updated!');}};
+  ws.onmessage=async msg=>{const d=JSON.parse(msg.data);if(d.event==='heartbeat'){ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:null}));return;}if(d.event==='postgres_changes'||d.payload?.data){const self=(Date.now()-lst)<3000;await loadAll();renderAll();updTrashBadge();if(!self)toast('🔄 New cards dealt!');}};
   ws.onclose=()=>{setSync('');setTimeout(setupRT,3000);};ws.onerror=()=>ws.close();
 }
 
-// Inactivity timeout — check on app focus/visibility
-document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible' && cu){
-    const la=parseInt(localStorage.getItem(LAST_ACTIVE_KEY)||'0');
-    if(la && Date.now()-la > TIMEOUT_MS){
-      clearAC();updateUB();renderAll();
-      document.getElementById('lm').classList.add('show');
-      toast('⏰ Session expire ho gaya. Dobara login karo.');
-    }
-  }
-});
 async function init(){
   buildPP();
   const sr=localStorage.getItem(RK);if(sr)document.getElementById('br').value=sr;
