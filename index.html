@@ -193,15 +193,28 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 <body>
 <div id="loader"><div class="ld-icon">&#9824;</div><div class="ld-title">POKER 🂠</div><div class="ld-bar"><div class="ld-prog"></div></div></div>
 
-<div class="mo" id="lm">
+<div cl<div class="mo" id="lm">
   <div class="ms">
     <div class="ll"><div class="lli">&#9824;</div><div class="lln">POKER TRACKER 🂠</div></div>
-    <div class="msub">Ante up — apna number daalo</div>
-    <div class="pw"><div class="pp">+91</div><input class="pi" type="tel" id="phi" maxlength="10" placeholder="10-digit number" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="le" id="lerr"></div>
-    <button class="btn bp bf" onclick="doLogin()" id="lbtn">I'm In →</button>
-    <div style="margin-top:10px;text-align:center"><button class="lob" onclick="viewOnly()">Rail Bird mode →</button></div>
+    <div id="lstep1">
+      <div class="msub">Ante up — apna number daalo</div>
+      <div class="pw"><div class="pp">+91</div><input class="pi" type="tel" id="phi" maxlength="10" placeholder="10-digit number" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="le" id="lerr"></div>
+      <button class="btn bp bf" onclick="doLogin()" id="lbtn">I'm In &rarr;</button>
+      <div style="margin-top:10px;text-align:center"><button class="lob" onclick="viewOnly()">Rail Bird mode &rarr;</button></div>
+    </div>
+    <div id="lstep2" style="display:none">
+      <div class="msub" id="lstep2name">PIN daalo</div>
+      <div class="pdots" id="lpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
+      <div class="ppad" id="lppad"></div>
+      <div class="pe" id="lperr"></div>
+      <div id="lpin_setup" style="display:none;margin-top:12px;text-align:center">
+        <div style="font-size:12px;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-bottom:8px">Pehli baar hai — apna naya PIN set karo</div>
+      </div>
+      <button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="backToPhone()">&#8592; Wapas</button>
+    </div>
   </div>
+</div>
 </div>
 
 <div class="mo" id="pm">
@@ -274,6 +287,18 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
     <div id="plist"></div>
     <hr class="dv">
   </div>
+  <div class="mo" id="pinresetm">
+    <div class="ms">
+      <div class="mh"></div>
+      <div class="mt">&#128272; PIN Reset</div>
+      <div class="msub" id="pinresetname">Player ka PIN reset karo</div>
+      <div class="pdots" id="prpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
+      <div class="ppad" id="prppad"></div>
+      <div class="pe" id="prperr"></div>
+      <div style="font-size:11px;color:var(--sub);text-align:center;margin-top:8px;font-family:'JetBrains Mono',monospace">Naya PIN set karo is player ke liye</div>
+      <button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="closePinReset()">Cancel</button>
+    </div>
+  </div>
   <div class="sl">📋 Table Info</div>
   <div class="bi"><div id="mstats">&#8212;</div><div>Device: <strong id="mdev" style="font-size:10px;word-break:break-all">&#8212;</strong></div></div>
   <div class="sl" style="margin-top:4px">💾 Backup</div>
@@ -308,7 +333,7 @@ const SB_URL    = 'https://ysooqusetyjvoxggizcv.supabase.co';
 const SB_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzb29xdXNldHlqdm94Z2dpemN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5ODc2NzAsImV4cCI6MjA5MTU2MzY3MH0.uhhGCJpoUmZewLY9n198a-ehuu5F0kGwsXnxApG1W_Q';
 const ADMIN_PIN = '2025'; // ← Apna PIN yahan set karo
 
-const CK='pk_v2_c',AK='pk_v2_a',DK='pk_v2_d',RK='pk_v2_r';
+const CK='pk_v2_c',AK='pk_v2_a',DK='pk_v2_d',RK='pk_v2_r',TIMEOUT_MS=7*24*60*60*1000,LAST_ACTIVE_KEY='pk_v2_la';
 const GC=['#e07b39','#3b82f6','#22c55e','#a855f7','#ef4444','#eab308','#06b6d4','#f97316'];
 const AM={session_saved:{i:'✅',l:'Session saved',c:'#22c55e'},session_deleted:{i:'🗑',l:'Session trashed',c:'#ef4444'},session_restored:{i:'♻️',l:'Session restored',c:'#22c55e'},session_purged:{i:'💥',l:'Session deleted',c:'#ef4444'},player_added:{i:'➕',l:'Player added',c:'#eab308'},player_deleted:{i:'🗑',l:'Player trashed',c:'#ef4444'},player_restored:{i:'♻️',l:'Player restored',c:'#22c55e'},player_purged:{i:'💥',l:'Player deleted',c:'#ef4444'},player_activated:{i:'✅',l:'Player activated',c:'#22c55e'},player_deactivated:{i:'💤',l:'Player deactivated',c:'#94a3b8'},data_reset:{i:'💥',l:'Data reset',c:'#ef4444'}};
 
@@ -350,36 +375,166 @@ async function loadAll(){
   sessions=(rs||[]).map(s=>({...s,entries:em[s.id]||[]}));
   saveC();
 }
-function saveC(){try{localStorage.setItem(CK,JSON.stringify({players,sessions,pStats,at:Date.now()}));}catch{}}
+function saveC(){try{localStorage.setItem(CK,JSON.stringify({players,sessions,pStats,at:Date.now()}));if(cu)bumpActive();}catch{}}
 function loadC(){try{const d=JSON.parse(localStorage.getItem(CK)||'{}');players=d.players||[];sessions=d.sessions||[];pStats=d.pStats||[];return true;}catch{return false;}}
 async function logA(action,detail=''){try{await sb.post('poker_activity',{action,done_by:cu?.name||'System',detail});}catch{}}
 async function cleanLogs(){try{await sb.rpc('cleanup_old_logs',{});}catch{}}
 
 function loadAC(){
-  try{const s=JSON.parse(localStorage.getItem(AK)||'{}');if(s.deviceId!==getDev()){localStorage.removeItem(AK);return false;}cu=s.user||null;isAdm=s.isAdm||false;isMem=s.isMem||false;return!!cu;}catch{return false;}
+  try{
+    const s=JSON.parse(localStorage.getItem(AK)||'{}');
+    if(s.deviceId!==getDev()){localStorage.removeItem(AK);return false;}
+    const la=parseInt(localStorage.getItem(LAST_ACTIVE_KEY)||'0');
+    if(la && Date.now()-la > TIMEOUT_MS){localStorage.removeItem(AK);localStorage.removeItem(LAST_ACTIVE_KEY);return false;}
+    cu=s.user||null;isAdm=s.isAdm||false;isMem=s.isMem||false;return!!cu;
+  }catch{return false;}
 }
-function saveAC(){localStorage.setItem(AK,JSON.stringify({deviceId:getDev(),user:cu,isAdm,isMem}));}
-function clearAC(){localStorage.removeItem(AK);cu=null;isAdm=false;isMem=false;}
+function saveAC(){localStorage.setItem(AK,JSON.stringify({deviceId:getDev(),user:cu,isAdm,isMem}));bumpActive();}
+function clearAC(){localStorage.removeItem(AK);localStorage.removeItem(LAST_ACTIVE_KEY);cu=null;isAdm=false;isMem=false;}
+function bumpActive(){localStorage.setItem(LAST_ACTIVE_KEY,Date.now().toString());}
 
+let _loginPhone='',_loginPending=null,_lpb='',_lpAttempts=0,_lpIsNew=false,_lpConfirm='';
 async function doLogin(){
   const ph=document.getElementById('phi').value.trim();
   const er=document.getElementById('lerr'),btn=document.getElementById('lbtn');
   if(!/^\d{10}$/.test(ph)){er.textContent='10-digit number daalo';return;}
   er.textContent='';btn.disabled=true;btn.textContent='Checking...';
   try{
-    const res=await sb.rpc('player_login',{p_phone:ph,p_device_id:getDev()});
+    const res=await sb.rpc('player_login_check',{p_phone:ph,p_device_id:getDev()});
     if(!res?.success){
       if(res?.error==='not_found')throw new Error('Yeh number registered nahi. Admin se contact karo.');
-      if(res?.error==='already_logged_in')throw new Error('Already kisi aur device pe login hai. Pehle wahan logout karo.');
-      throw new Error('Login fail hua. Dobara try karo.');
-    }
-    cu={id:res.id,name:res.name,is_admin:res.is_admin};isMem=true;isAdm=false;saveAC();
-    document.getElementById('lm').classList.remove('show');
-    updateUB();
-    if(res.is_admin){pb='';updPD();document.getElementById('perr').textContent='';document.getElementById('pm').classList.add('show');}
-    renderAll();toast(`Welcome ${esc(res.name)}! 🎉`);
+      if(res?.error==='already_logged_in'){
+        const ok=confirm('⚠️ Yeh account kisi aur device pe login hai.\n\nFir bhi is device pe login karna chahte ho?');
+        if(!ok){er.textContent='Login cancel kiya.';return;}
+        const fr=await sb.rpc('player_login_check',{p_phone:ph,p_device_id:getDev(),p_force:true});
+        if(!fr?.success)throw new Error('Login fail hua.');
+        _loginPending=fr;
+      } else throw new Error('Login fail hua. Dobara try karo.');
+    } else _loginPending=res;
+    _loginPhone=ph;_lpb='';_lpAttempts=0;
+    _lpIsNew=!_loginPending.has_pin;
+    _lpConfirm='';
+    document.getElementById('lstep1').style.display='none';
+    document.getElementById('lstep2').style.display='block';
+    document.getElementById('lstep2name').textContent=`Welcome, ${esc(_loginPending.name)} 👋`;
+    document.getElementById('lpin_setup').style.display=_lpIsNew?'block':'none';
+    document.getElementById('lperr').textContent='';
+    updLPD();buildLPPad();
   }catch(e){er.textContent=e.message;}
   finally{btn.disabled=false;btn.textContent='Continue →';}
+}
+function backToPhone(){
+  document.getElementById('lstep1').style.display='block';
+  document.getElementById('lstep2').style.display='none';
+  document.getElementById('lerr').textContent='';
+  _loginPending=null;_lpb='';_lpConfirm='';
+}
+function updLPD(){document.querySelectorAll('#lpdots .pd').forEach((d,i)=>d.classList.toggle('f',i<_lpb.length));}
+function buildLPPad(){
+  const el=document.getElementById('lppad');if(!el)return;el.innerHTML='';
+  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k=>{
+    if(!k){el.appendChild(document.createElement('div'));return;}
+    const b=document.createElement('button');b.className='pk'+(k==='⌫'?' del':'');b.textContent=k;
+    b.onclick=()=>lpp(k);el.appendChild(b);
+  });
+}
+function lpp(v){
+  if(v==='⌫'){_lpb=_lpb.slice(0,-1);updLPD();return;}
+  if(_lpb.length>=4)return;
+  _lpb+=v;updLPD();
+  if(_lpb.length===4)setTimeout(()=>chkLoginPin(),150);
+}
+async function chkLoginPin(){
+  const er=document.getElementById('lperr');
+  if(_lpIsNew){
+    if(!_lpConfirm){
+      _lpConfirm=_lpb;_lpb='';updLPD();
+      er.textContent='';
+      document.getElementById('lstep2name').textContent='Dobara daalo — confirm karo';
+      return;
+    }
+    if(_lpb!==_lpConfirm){
+      er.textContent='❌ PIN match nahi kiya! Phir se try karo.';
+      _lpb='';_lpConfirm='';updLPD();
+      document.getElementById('lstep2name').textContent=`Welcome, ${esc(_loginPending.name)} 👋`;
+      return;
+    }
+    try{await sb.rpc('player_set_pin',{p_phone:_loginPhone,p_pin:_lpConfirm});}
+    catch(e){er.textContent='PIN save nahi hua: '+e.message;_lpb='';_lpConfirm='';updLPD();return;}
+    finishLogin();return;
+  }
+  try{
+    const ok=await sb.rpc('player_verify_pin',{p_phone:_loginPhone,p_pin:_lpb,p_device_id:getDev()});
+    if(!ok?.success){
+      _lpAttempts++;
+      if(_lpAttempts>=3){
+        er.textContent='❌ 3 baar galat PIN. 30 sec wait karo.';
+        document.querySelectorAll('#lppad button').forEach(b=>b.disabled=true);
+        setTimeout(()=>{document.querySelectorAll('#lppad button').forEach(b=>b.disabled=false);_lpAttempts=0;er.textContent='';},30000);
+      } else er.textContent=`❌ Wrong PIN! (${3-_lpAttempts} try bacha)`;
+      _lpb='';updLPD();return;
+    }
+    finishLogin();
+  }catch(e){er.textContent='Error: '+e.message;_lpb='';updLPD();}
+}
+function finishLogin(){
+  const res=_loginPending;
+  cu={id:res.id,name:res.name,is_admin:res.is_admin};isMem=true;isAdm=false;saveAC();bumpActive();
+  document.getElementById('lm').classList.remove('show');
+  document.getElementById('lstep1').style.display='block';
+  document.getElementById('lstep2').style.display='none';
+  document.getElementById('phi').value='';
+  updateUB();
+  if(res.is_admin){pb='';updPD();document.getElementById('perr').textContent='';document.getElementById('pm').classList.add('show');}
+  renderAll();toast(`Welcome ${esc(res.name)}! 🎉`);
+  _loginPending=null;_lpb='';_lpConfirm='';
+}
+let _prTarget=null,_prb='',_prConfirm='',_prppadBuilt=false;
+function openPinReset(playerId,playerName,playerPhone){
+  if(!isAdm){toast('🔒 Sirf admin');return;}
+  _prTarget={id:playerId,name:playerName,phone:playerPhone};
+  _prb='';_prConfirm='';
+  document.getElementById('pinresetname').textContent=`${esc(playerName)} ka naya PIN set karo`;
+  document.getElementById('prperr').textContent='';
+  updPRD();
+  if(!_prppadBuilt){buildPRPad();_prppadBuilt=true;}
+  document.getElementById('pinresetm').classList.add('show');
+}
+function closePinReset(){document.getElementById('pinresetm').classList.remove('show');_prTarget=null;_prb='';_prConfirm='';}
+function updPRD(){document.querySelectorAll('#prpdots .pd').forEach((d,i)=>d.classList.toggle('f',i<_prb.length));}
+function buildPRPad(){
+  const el=document.getElementById('prppad');if(!el)return;el.innerHTML='';
+  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k=>{
+    if(!k){el.appendChild(document.createElement('div'));return;}
+    const b=document.createElement('button');b.className='pk'+(k==='⌫'?' del':'');b.textContent=k;
+    b.onclick=()=>prp(k);el.appendChild(b);
+  });
+}
+function prp(v){
+  if(v==='⌫'){_prb=_prb.slice(0,-1);updPRD();return;}
+  if(_prb.length>=4)return;
+  _prb+=v;updPRD();
+  if(_prb.length===4)setTimeout(()=>chkPRPin(),150);
+}
+async function chkPRPin(){
+  const er=document.getElementById('prperr');
+  if(!_prConfirm){
+    _prConfirm=_prb;_prb='';updPRD();
+    er.textContent='';
+    document.getElementById('pinresetname').textContent='Confirm karo — dobara daalo';
+    return;
+  }
+  if(_prb!==_prConfirm){
+    er.textContent='❌ PIN match nahi kiya!';
+    _prb='';_prConfirm='';updPRD();
+    document.getElementById('pinresetname').textContent=`${esc(_prTarget.name)} ka naya PIN set karo`;
+    return;
+  }
+  try{
+    await sb.rpc('player_set_pin',{p_phone:_prTarget.phone,p_pin:_prConfirm});
+    toast(`${esc(_prTarget.name)} ka PIN set ho gaya ✓`);
+    closePinReset();
+  }catch(e){er.textContent='Error: '+e.message;_prb='';_prConfirm='';updPRD();}
 }
 function viewOnly(){document.getElementById('lm').classList.remove('show');renderAll();}
 async function doLogout(){
@@ -613,8 +768,8 @@ function renderPList(){
   const el=document.getElementById('plist');if(!el)return;
   const act=players.filter(p=>p.is_active!==false),inact=players.filter(p=>p.is_active===false);
   let h='';
-  if(act.length){h+=`<div class="sl">🟢 Active Players</div>`;h+=act.map(p=>`<div class="plr"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="deactP(this.dataset.id,this.dataset.n)">Deactivate</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button></div>`:''}</div>`).join('');}
-  if(inact.length){h+=`<div class="sl" style="margin-top:16px">💤 Sat Out</div>`;h+=inact.map(p=>`<div class="plr in"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb g" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="actP(this.dataset.id,this.dataset.n)">Activate</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button></div>`:''}</div>`).join('');}
+  if(act.length){h+=`<div class="sl">🟢 Active Players</div>`;h+=act.map(p=>`<div class="plr"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="deactP(this.dataset.id,this.dataset.n)">Deactivate</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button><button class="smb" style="background:var(--gold-bg);color:var(--gold);border-color:rgba(200,146,42,0.3)" data-id="${esc(p.id)}" data-n="${esc(p.name)}" data-ph="${esc(p.phone)}" onclick="openPinReset(this.dataset.id,this.dataset.n,this.dataset.ph)">PIN</button></div>`:''}</div>`).join('');}
+  if(inact.length){h+=`<div class="sl" style="margin-top:16px">💤 Sat Out</div>`;h+=inact.map(p=>`<div class="plr in"><div class="pri"><div class="prn">${esc(p.name)}</div><div class="prp">${esc(p.phone)}</div></div>${isAdm?`<div class="pra"><button class="smb g" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="actP(this.dataset.id,this.dataset.n)">Activate</button><button class="smb d" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="trPlay(this.dataset.id,this.dataset.n)">🗑</button><button class="smb" style="background:var(--gold-bg);color:var(--gold);border-color:rgba(200,146,42,0.3)" data-id="${esc(p.id)}" data-n="${esc(p.name)}" data-ph="${esc(p.phone)}" onclick="openPinReset(this.dataset.id,this.dataset.n,this.dataset.ph)">PIN</button></div>`:''}</div>`).join('');}
   if(!h)h=emp('🪑','No players at the table. Add karo!');el.innerHTML=h;
 }
 async function doAddP(){
@@ -650,6 +805,12 @@ function setupRT(){
   ws.onclose=()=>{setSync('');setTimeout(setupRT,3000);};ws.onerror=()=>ws.close();
 }
 
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&cu){
+    const la=parseInt(localStorage.getItem(LAST_ACTIVE_KEY)||'0');
+    if(la&&Date.now()-la>TIMEOUT_MS){clearAC();updateUB();renderAll();document.getElementById('lm').classList.add('show');toast('⏰ Session expire ho gaya. Dobara login karo.');}
+  }
+});
 async function init(){
   buildPP();
   const sr=localStorage.getItem(RK);if(sr)document.getElementById('br').value=sr;
