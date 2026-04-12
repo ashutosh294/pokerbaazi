@@ -188,6 +188,8 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .actd{color:var(--sub);font-size:11px;font-family:'JetBrains Mono',monospace}
 .actm{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:3px}
 @media(max-width:360px){.tam{font-size:14px}.pv{font-size:22px}.lnet{font-size:15px}}
+#installBtn{display:none;align-items:center;gap:5px;background:var(--gold-bg);border:1.5px solid var(--gold);border-radius:var(--rs);color:var(--gold);font-family:inherit;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
+#installBtn:active{background:var(--gold);color:#fff}
 </style>
 </head>
 <body>
@@ -218,7 +220,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 
 <div id="ob">&#128245; Offline &mdash; cached data dikhaya ja raha hai</div>
 <div id="ub"><div><span id="un"></span><span id="urol" style="color:var(--sub);font-size:11px;margin-left:6px"></span></div><button class="lob" onclick="doLogout()">Logout</button></div>
-<div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div>
+<div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><button id="installBtn" onclick="installApp()">&#128247; Install</button><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div>
 
 <div id="tab-board" class="tab active">
   <div class="sl">Standings</div>
@@ -230,7 +232,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
   <div class="sl">Who's playing?</div>
   <div class="ptl" id="ptogl"></div>
   <hr class="dv">
-  <div class="ch"><span>Player</span><span>buyings</span><span>Result &#8377;</span></div>
+  <div class="ch"><span>Player</span><span>Buyings</span><span>Result &#8377;</span></div>
   <div id="sents"></div>
   <div class="pb"><div><div class="pl">Total Pot</div><div class="ps" id="ptsub"></div></div><div class="pv" id="ptval">&#8377;0</div></div>
   <div class="wb" id="wbox"></div>
@@ -668,6 +670,27 @@ async function init(){
 
 init();
 </script>
-<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});</script>
+<script>
+let _dp=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();_dp=e;
+  const b=document.getElementById('installBtn');
+  if(b)b.style.display='flex';
+});
+async function installApp(){
+  if(!_dp)return;
+  _dp.prompt();
+  const{outcome}=await _dp.userChoice;
+  _dp=null;
+  const b=document.getElementById('installBtn');
+  if(b)b.style.display='none';
+}
+window.addEventListener('appinstalled',()=>{
+  _dp=null;
+  const b=document.getElementById('installBtn');
+  if(b)b.style.display='none';
+});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
 </body>
 </html>
