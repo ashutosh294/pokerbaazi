@@ -244,7 +244,7 @@ CREATE POLICY "rpc_write_activity"    ON poker_activity FOR ALL USING (true);
 --  SEED — Admin player (apna number aur naam yahan daalo)
 -- ══════════════════════════════════════════════════════════
 INSERT INTO poker_players (name, phone, is_admin)
-VALUES ('Admin', '9999999999', true)   -- ← APNA NAAM AUR NUMBER YAHAN BADLO
+VALUES ('Ashutosh', '7579208389', true)
 ON CONFLICT (phone) DO NOTHING;
 
 -- ══════════════════════════════════════════════════════════
