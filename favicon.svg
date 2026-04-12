@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="96" fill="#1a1a2e"/>
+  <!-- Spade symbol -->
+  <path d="
+    M256 80
+    C256 80 120 180 120 270
+    C120 320 158 350 200 345
+    C185 370 175 390 155 400
+    L357 400
+    C337 390 327 370 312 345
+    C354 350 392 320 392 270
+    C392 180 256 80 256 80Z
+  " fill="#f0c040"/>
+</svg>

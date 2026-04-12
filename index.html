@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Poker">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<title>Poker Tracker ♠</title>
+<!-- ENV config — Vercel se, must load before modules -->
+<script src="/api/env" onerror="window.__ENV__={}"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   TOKENS
+══════════════════════════════════════ */
+:root {
+  --bg:       #f7f6f3;
+  --surface:  #ffffff;
+  --border:   #e8e5de;
+  --border2:  #d4cfc4;
+  --text:     #1a1814;
+  --sub:      #6b6560;
+  --dim:      #a09890;
+  --gold:     #c8922a;
+  --gold-bg:  #fdf6e8;
+  --green:    #1e8a5e;
+  --green-bg: #edfaf4;
+  --red:      #c0392b;
+  --red-bg:   #fdf0ee;
+  --blue:     #2563eb;
+  --radius:   12px;
+  --radius-s: 8px;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-m: 0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ══════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; overscroll-behavior:none; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+button { font-family: inherit; cursor: pointer; }
+input  { font-family: inherit; }
+
+/* ══════════════════════════════════════
+   LOADER
+══════════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0; background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; z-index: 999; transition: opacity 0.3s;
+}
+#loader.hide { opacity: 0; pointer-events: none; }
+.ld-icon { font-size: 48px; }
+.ld-title {
+  font-size: 22px; font-weight: 700; letter-spacing: 2px;
+  color: var(--text);
+}
+.ld-bar {
+  width: 120px; height: 3px; background: var(--border);
+  border-radius: 99px; overflow: hidden;
+}
+.ld-prog {
+  height: 100%; width: 0; background: var(--gold);
+  border-radius: 99px; animation: ldprog 1.2s ease-in-out infinite;
+}
+@keyframes ldprog {
+  0%   { width:0%;  margin-left:0 }
+  50%  { width:60%; margin-left:20% }
+  100% { width:0%;  margin-left:100% }
+}
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 76px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--text); color: #fff;
+  font-size: 13px; font-weight: 500;
+  padding: 10px 20px; border-radius: 99px;
+  z-index: 600; opacity: 0; pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap; box-shadow: var(--shadow-m);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══════════════════════════════════════
+   MODALS (base)
+══════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  display: none; align-items: flex-end; justify-content: center;
+  z-index: 400;
+}
+.modal-overlay.show { display: flex; }
+.modal-sheet {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 32px;
+  width: 100%; max-width: 480px;
+  box-shadow: var(--shadow-m);
+  animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--border2); border-radius: 99px;
+  margin: 0 auto 20px;
+}
+.modal-title {
+  font-size: 18px; font-weight: 700;
+  text-align: center; margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 12px; color: var(--sub);
+  text-align: center; margin-bottom: 20px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ══════════════════════════════════════
+   LOGIN MODAL
+══════════════════════════════════════ */
+#login-modal .modal-sheet { border-radius: 20px; max-width: 380px; margin: auto; }
+#login-modal { align-items: center; }
+.login-logo { text-align: center; margin-bottom: 24px; }
+.login-logo-icon { font-size: 48px; }
+.login-logo-name {
+  font-size: 24px; font-weight: 700; letter-spacing: 1px;
+  margin-top: 8px;
+}
+.phone-input-wrap {
+  display: flex; align-items: center;
+  border: 1.5px solid var(--border2); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+.phone-input-wrap:focus-within { border-color: var(--gold); }
+.phone-prefix {
+  padding: 12px 12px 12px 14px;
+  color: var(--sub); font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; border-right: 1px solid var(--border);
+  background: var(--bg); white-space: nowrap;
+}
+.phone-input {
+  flex: 1; padding: 12px; border: none; outline: none;
+  background: transparent; font-size: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px; color: var(--text);
+}
+.login-err {
+  font-size: 12px; color: var(--red); text-align: center;
+  min-height: 18px; font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 8px;
+}
+
+/* ══════════════════════════════════════
+   PIN MODAL
+══════════════════════════════════════ */
+.pin-dots {
+  display: flex; gap: 12px; justify-content: center;
+  margin-bottom: 24px;
+}
+.pin-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--border2); background: transparent;
+  transition: all 0.15s;
+}
+.pin-dot.filled { background: var(--gold); border-color: var(--gold); }
+.pin-pad {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+}
+.pin-key {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-size: 20px; font-weight: 500; padding: 14px;
+  transition: all 0.1s; touch-action: manipulation;
+}
+.pin-key:active { background: var(--gold-bg); transform: scale(0.95); }
+.pin-key.del { font-size: 14px; color: var(--sub); }
+.pin-err {
+  text-align: center; font-size: 12px; color: var(--red);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 18px; margin-top: 8px;
+}
+@keyframes shake {
+  0%,100% { transform:translateX(0) }
+  25%      { transform:translateX(-8px) }
+  75%      { transform:translateX(8px) }
+}
+
+/* ══════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════ */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+}
+.tb-logo {
+  font-size: 17px; font-weight: 700; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tb-logo span { color: var(--gold); }
+.tb-right { display: flex; align-items: center; gap: 12px; }
+.rate-wrap { display: flex; align-items: center; gap: 6px; }
+.rate-label { font-size: 11px; color: var(--sub); font-family: 'JetBrains Mono', monospace; }
+.rate-inp {
+  width: 64px; border: 1px solid var(--border2); border-radius: var(--radius-s);
+  padding: 4px 8px; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 600; text-align: right;
+  background: var(--bg); color: var(--text); outline: none;
+}
+.rate-inp:focus { border-color: var(--gold); }
+.sync-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--dim); transition: all 0.3s; flex-shrink: 0;
+}
+.sync-dot.on   { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.sync-dot.busy { background: var(--gold); animation: pulse 0.8s infinite; }
+.sync-dot.err  { background: var(--red); }
+@keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
+
+/* ── Offline + User bar ── */
+#offline-bar {
+  display: none; background: var(--red-bg);
+  border-bottom: 1px solid var(--red);
+  padding: 6px 16px; font-size: 12px; color: var(--red);
+  font-family: 'JetBrains Mono', monospace; text-align: center;
+}
+#user-bar {
+  display: none; background: var(--green-bg);
+  border-bottom: 1px solid rgba(30,138,94,0.2);
+  padding: 6px 16px; font-size: 12px;
+  align-items: center; justify-content: space-between;
+}
+#user-bar.show { display: flex; }
+#user-name { font-weight: 600; color: var(--green); }
+#user-role { color: var(--sub); font-size: 11px; }
+.user-bar-right { display: flex; align-items: center; gap: 10px; }
+.logout-btn {
+  background: none; border: none; color: var(--sub);
+  font-size: 11px; text-decoration: underline; padding: 2px 0;
+  font-family: inherit;
+}
+
+/* ══════════════════════════════════════
+   TABS
+══════════════════════════════════════ */
+.tab { display: none; max-width: 480px; margin: 0 auto; padding: 16px 14px; }
+.tab.active { display: block; }
+
+/* ══════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════ */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex; z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.nav-btn {
+  flex: 1; background: none; border: none;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; padding: 8px 4px 6px;
+  color: var(--dim); transition: color 0.2s; position: relative;
+}
+.nav-btn.active { color: var(--gold); }
+.nav-ico { font-size: 19px; line-height: 1; }
+.nav-lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
+.nav-badge {
+  position: absolute; top: 4px; right: calc(50% - 14px);
+  background: var(--red); color: #fff;
+  font-size: 9px; font-weight: 700;
+  min-width: 16px; height: 16px; border-radius: 99px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px; font-family: 'JetBrains Mono', monospace;
+}
+
+/* ══════════════════════════════════════
+   COMMON COMPONENTS
+══════════════════════════════════════ */
+.section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--dim);
+  margin-bottom: 10px; font-family: 'JetBrains Mono', monospace;
+}
+.empty-state {
+  text-align: center; padding: 48px 16px; color: var(--dim);
+}
+.empty-state .ei { font-size: 36px; margin-bottom: 10px; }
+.empty-state p   { font-size: 13px; line-height: 1.6; }
+.hint { color: var(--dim); font-size: 13px; text-align: center; }
+hr.div { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: none; border-radius: var(--radius); font-family: inherit;
+  font-size: 14px; font-weight: 600; padding: 11px 18px;
+  cursor: pointer; transition: all 0.15s; touch-action: manipulation;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--text); color: #fff; }
+.btn-primary:hover { background: #333; }
+.btn-gold    { background: var(--gold); color: #fff; }
+.btn-outline { background: transparent; border: 1.5px solid var(--border2); color: var(--text); }
+.btn-danger  { background: var(--red-bg); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+.btn-full    { width: 100%; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn-sm { font-size: 12px; padding: 7px 12px; border-radius: var(--radius-s); }
+
+/* Inputs */
+.finp {
+  width: 100%; background: var(--bg);
+  border: 1.5px solid var(--border2); border-radius: var(--radius);
+  color: var(--text); font-family: inherit; font-size: 14px;
+  padding: 11px 14px; outline: none; transition: border-color 0.2s;
+}
+.finp:focus { border-color: var(--gold); background: #fff; }
+.finp::placeholder { color: var(--dim); }
+
+/* Cards */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  margin-bottom: 10px; box-shadow: var(--shadow);
+}
+
+/* Stat pills */
+.stat-pills {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+  margin-bottom: 16px;
+}
+.stat-pills.mb { margin-bottom: 16px; }
+.stat-pill {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 8px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.sp-val { font-size: 18px; font-weight: 700; color: var(--text); }
+.sp-key { font-size: 9px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; font-family:'JetBrains Mono',monospace; }
+
+/* icon btn */
+.icon-btn {
+  background: none; border: none; font-size: 16px;
+  color: var(--dim); cursor: pointer; padding: 4px 6px;
+  border-radius: var(--radius-s); transition: all 0.15s;
+}
+.icon-btn:hover { background: var(--bg); }
+.icon-btn.danger:hover { color: var(--red); }
+
+/* ══════════════════════════════════════
+   LEADERBOARD
+══════════════════════════════════════ */
+.lb-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 14px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 8px; box-shadow: var(--shadow);
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.3s ease both;
+}
+.lb-row::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; border-radius:3px 0 0 3px;
+}
+.lb-row.pos::before { background: var(--green); }
+.lb-row.neg::before { background: var(--red); }
+.lb-row.zero::before { background: var(--dim); }
+.lb-rank { font-size: 18px; min-width: 28px; }
+.lb-info { flex:1; min-width:0; }
+.lb-name { font-size:14px; font-weight:600; }
+.lb-meta { font-size:10px; color:var(--sub); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+.lb-net  { font-size:18px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.lb-net.pos  { color:var(--green); }
+.lb-net.neg  { color:var(--red); }
+.lb-net.zero { color:var(--dim); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ══════════════════════════════════════
+   SESSION TAB
+══════════════════════════════════════ */
+.ptog-list { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
+.ptog {
+  background: var(--surface); border: 1.5px solid var(--border2);
+  border-radius: 99px; color: var(--sub); cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  padding: 7px 15px; transition: all 0.15s; touch-action: manipulation;
+}
+.ptog.on {
+  background: var(--gold-bg); border-color: var(--gold);
+  color: var(--gold); font-weight: 600;
+}
+.col-hdr {
+  display: grid; grid-template-columns: 1fr auto auto;
+  gap: 8px; padding: 0 8px 8px;
+  font-size: 9px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+.col-hdr span:nth-child(2) { text-align:center; min-width:84px; }
+.col-hdr span:last-child   { text-align:right;  min-width:84px; }
+.entry-row {
+  display: grid; grid-template-columns: 1fr auto auto;
+  gap: 8px; align-items: center;
+  padding: 9px 10px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-s);
+  margin-bottom: 6px;
+}
+.entry-name { font-size:13px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.buy-ctrl   { display:flex; align-items:center; gap:5px; min-width:84px; justify-content:center; }
+.buy-btn    {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 6px; color: var(--text); font-size:16px;
+  padding: 3px 10px; touch-action: manipulation; transition: all 0.1s;
+}
+.buy-btn:active { background: var(--gold-bg); }
+.buy-cnt {
+  font-family:'JetBrains Mono',monospace; font-size:14px;
+  font-weight:600; color:var(--gold); min-width:20px; text-align:center;
+}
+.res-inp {
+  width: 84px; background: var(--bg); border: 1px solid var(--border2);
+  border-radius: var(--radius-s); color: var(--text);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  padding: 7px 8px; text-align: right; outline: none;
+  transition: border-color 0.2s;
+}
+.res-inp:focus { border-color: var(--gold); background: #fff; }
+.pot-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--gold-bg); border: 1px solid rgba(200,146,42,0.25);
+  border-radius: var(--radius); padding: 12px 16px; margin: 12px 0;
+}
+.pot-lbl { font-size:11px; color:var(--sub); text-transform:uppercase; letter-spacing:1.5px; font-family:'JetBrains Mono',monospace; }
+.pot-sub { font-size:10px; color:var(--dim); font-family:'JetBrains Mono',monospace; margin-top:3px; }
+.pot-val { font-size:26px; font-weight:700; color:var(--gold); font-family:'JetBrains Mono',monospace; }
+.warn-box {
+  display: none; background: var(--red-bg);
+  border: 1px solid rgba(192,57,43,0.25); border-radius: var(--radius-s);
+  padding: 9px 13px; font-size:12px; color:var(--red); margin-bottom:10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.sess-btns { display:flex; gap:8px; flex-wrap:wrap; }
+
+/* ══════════════════════════════════════
+   HISTORY
+══════════════════════════════════════ */
+.hist-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 10px;
+  overflow: hidden; box-shadow: var(--shadow);
+  animation: fadeUp 0.3s ease both;
+}
+.hist-hdr {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding: 11px 13px; background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.hist-ttl  { font-size:15px; font-weight:700; }
+.hist-meta { font-size:10px; color:var(--sub); font-family:'JetBrains Mono',monospace; margin-top:3px; }
+.hist-body { padding: 8px 13px 10px; }
+.hist-row  {
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 6px 0; border-bottom: 1px solid var(--border); font-size:13px;
+}
+.hist-row:last-child { border-bottom:none; }
+.h-name { color:var(--text); font-weight:500; }
+.h-buy  { color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:11px; }
+.h-net  { font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px; }
+.h-net.pos  { color:var(--green); }
+.h-net.neg  { color:var(--red); }
+.h-net.zero { color:var(--dim); }
+
+/* ══════════════════════════════════════
+   SETTLE
+══════════════════════════════════════ */
+.seg-ctrl {
+  display:flex; gap:3px; background:var(--bg);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  padding: 3px; margin-bottom: 14px;
+}
+.seg-btn {
+  flex:1; background:transparent; border:none; border-radius: var(--radius-s);
+  color:var(--sub); font-family:inherit; font-size:13px; font-weight:600;
+  padding: 8px; transition: all 0.2s;
+}
+.seg-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.bal-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 8px 12px; border-radius: var(--radius-s);
+  background: var(--bg); margin-bottom: 5px; font-size:13px;
+}
+.bal-name { font-weight:500; }
+.bal-amt  { font-family:'JetBrains Mono',monospace; font-weight:600; }
+.bal-amt.pos  { color:var(--green); }
+.bal-amt.neg  { color:var(--red); }
+.bal-amt.zero { color:var(--dim); }
+.all-settled  { text-align:center; padding:24px; color:var(--green); font-weight:600; }
+.txn-card {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px;
+  box-shadow: var(--shadow); animation: fadeUp 0.3s ease both;
+  position:relative; overflow:hidden;
+}
+.txn-card::before { content:''; position:absolute; left:0;top:0;bottom:0; width:3px; background:var(--red); }
+.txn-from  { font-size:13px; font-weight:600; color:var(--red); flex:1; text-align:right; }
+.txn-arrow { font-size:11px; color:var(--dim); flex-shrink:0; }
+.txn-to    { font-size:13px; font-weight:600; color:var(--green); flex:1; }
+.txn-amt   { font-size:17px; font-weight:700; color:var(--text); font-family:'JetBrains Mono',monospace; min-width:64px; text-align:right; }
+
+/* ══════════════════════════════════════
+   STATS
+══════════════════════════════════════ */
+.rank-card {
+  display:flex; align-items:center; gap:12px;
+  padding: 13px 14px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 8px; box-shadow: var(--shadow);
+  cursor:pointer; transition: all 0.15s;
+  position:relative; overflow:hidden; animation:fadeUp 0.3s ease both;
+}
+.rank-card:active { transform:scale(0.98); }
+.rank-card::before { content:''; position:absolute; left:0;top:0;bottom:0; width:3px; border-radius:3px 0 0 3px; }
+.rank-card.pos::before { background:var(--green); }
+.rank-card.neg::before { background:var(--red); }
+.rank-card.zero::before { background:var(--dim); }
+.rc-rank  { font-size:20px; min-width:32px; text-align:center; }
+.rc-info  { flex:1; min-width:0; }
+.rc-name  { font-size:14px; font-weight:600; }
+.rc-meta  { font-size:10px; color:var(--sub); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+.rc-right { text-align:right; flex-shrink:0; }
+.rc-net   { font-size:17px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.rc-net.pos  { color:var(--green); }
+.rc-net.neg  { color:var(--red); }
+.rc-net.zero { color:var(--dim); }
+.rc-avg   { font-size:10px; color:var(--sub); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+.rc-arrow { color:var(--dim); font-size:18px; flex-shrink:0; }
+
+.back-btn {
+  display:flex; align-items:center; gap:6px;
+  background:var(--bg); border:1px solid var(--border2); border-radius:var(--radius);
+  color:var(--text); font-family:inherit; font-size:13px; font-weight:500;
+  padding:8px 14px; margin-bottom:14px; cursor:pointer; transition:all 0.15s;
+}
+.player-header { margin-bottom:14px; }
+.player-title  { font-size:22px; font-weight:700; }
+.player-sub    { font-size:11px; color:var(--sub); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.stat-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:12px 10px; text-align:center;
+  box-shadow:var(--shadow);
+}
+.stat-card.full { grid-column:1/-1; }
+.stat-card.pos  { background:var(--green-bg); border-color:rgba(30,138,94,0.2); }
+.stat-card.neg  { background:var(--red-bg); border-color:rgba(192,57,43,0.2); }
+.sc-val  { font-size:20px; font-weight:700; color:var(--text); }
+.sc-val.pos  { color:var(--green); }
+.sc-val.neg  { color:var(--red); }
+.sc-val.gold { color:var(--gold); }
+.sc-key  { font-size:9px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-top:3px; font-family:'JetBrains Mono',monospace; }
+.dots-row { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
+.dot      { width:12px; height:12px; border-radius:50%; }
+.dot.win  { background:var(--green); }
+.dot.loss { background:var(--red); }
+.dot.push { background:var(--dim); opacity:0.4; }
+
+/* Graph */
+.gpbtns  { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.gpbtn {
+  background:var(--surface); border:1.5px solid var(--border2);
+  border-radius:99px; color:var(--sub); cursor:pointer;
+  font-family:inherit; font-size:12px; font-weight:500;
+  padding:5px 13px; transition:all 0.15s;
+}
+.graph-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:12px; overflow:hidden;
+  box-shadow:var(--shadow);
+}
+#pnl-canvas { width:100%; display:block; }
+.gleg-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+.gleg     { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--sub); font-family:'JetBrains Mono',monospace; }
+.gleg-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* ══════════════════════════════════════
+   TRASH TAB
+══════════════════════════════════════ */
+.trash-seg {
+  display:flex; gap:3px; background:var(--bg);
+  border:1px solid var(--border2); border-radius:var(--radius);
+  padding:3px; margin-bottom:14px;
+}
+.trash-seg-btn {
+  flex:1; background:transparent; border:none; border-radius:var(--radius-s);
+  color:var(--sub); font-family:inherit; font-size:13px; font-weight:600;
+  padding:8px; transition:all 0.2s;
+}
+.trash-seg-btn.active { background:var(--surface); color:var(--red); box-shadow:var(--shadow); }
+.trash-card {
+  background:var(--surface); border:1px solid rgba(192,57,43,0.15);
+  border-radius:var(--radius); margin-bottom:10px;
+  overflow:hidden; animation:fadeUp 0.3s ease both; box-shadow:var(--shadow);
+}
+.trash-hdr {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding:11px 13px; background:var(--red-bg); border-bottom:1px solid rgba(192,57,43,0.1);
+}
+.trash-ttl  { font-size:14px; font-weight:600; color:var(--red); }
+.trash-meta { font-size:10px; color:var(--sub); font-family:'JetBrains Mono',monospace; margin-top:3px; }
+.trash-acts { display:flex; gap:6px; flex-shrink:0; }
+.tbtn {
+  border:none; border-radius:var(--radius-s); cursor:pointer;
+  font-family:inherit; font-size:12px; font-weight:600;
+  padding:6px 10px; transition:all 0.15s;
+}
+.tbtn.restore { background:var(--green-bg); color:var(--green); border:1px solid rgba(30,138,94,0.2); }
+.tbtn.purge   { background:var(--red-bg); color:var(--red); border:1px solid rgba(192,57,43,0.2); }
+.trash-player {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--surface); border:1px solid rgba(192,57,43,0.15);
+  border-radius:var(--radius); padding:12px 14px; margin-bottom:8px;
+  animation:fadeUp 0.3s ease both; box-shadow:var(--shadow);
+}
+.tp-name { font-size:14px; font-weight:600; }
+
+/* ══════════════════════════════════════
+   MORE / PLAYERS
+══════════════════════════════════════ */
+.add-row    { display:flex; gap:8px; margin-bottom:14px; }
+.player-row {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:11px 13px; margin-bottom:7px;
+  box-shadow:var(--shadow);
+}
+.player-row.inactive { opacity:0.55; }
+.pr-info    { min-width:0; }
+.pr-name    { font-size:14px; font-weight:500; }
+.pr-phone   { font-size:11px; color:var(--sub); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+.pr-acts    { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+.small-btn  {
+  background:var(--bg); border:1px solid var(--border2);
+  border-radius:var(--radius-s); color:var(--sub); cursor:pointer;
+  font-family:inherit; font-size:11px; font-weight:600; padding:5px 10px;
+  transition:all 0.15s;
+}
+.small-btn.danger { background:var(--red-bg); color:var(--red); border-color:rgba(192,57,43,0.2); }
+.small-btn.green  { background:var(--green-bg); color:var(--green); border-color:rgba(30,138,94,0.2); }
+.bk-box {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:12px 14px; margin-bottom:14px;
+  font-size:12px; color:var(--sub); font-family:'JetBrains Mono',monospace; line-height:2;
+}
+.bk-box strong { color:var(--text); }
+
+/* Activity log */
+.act-row {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 12px; border-radius:var(--radius);
+  background:var(--surface); border:1px solid var(--border);
+  margin-bottom:7px; box-shadow:var(--shadow); animation:fadeUp 0.3s ease both;
+}
+.act-icon   { font-size:16px; flex-shrink:0; margin-top:1px; }
+.act-info   { flex:1; min-width:0; }
+.act-label  { font-size:13px; font-weight:500; }
+.act-detail { color:var(--sub); font-size:11px; font-family:'JetBrains Mono',monospace; }
+.act-meta   { font-size:11px; color:var(--dim); font-family:'JetBrains Mono',monospace; margin-top:3px; }
+
+@media (max-width:360px) {
+  .txn-amt { font-size:14px; }
+  .pot-val { font-size:22px; }
+  .lb-net  { font-size:15px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-icon">♠</div>
+  <div class="ld-title">POKER</div>
+  <div class="ld-bar"><div class="ld-prog"></div></div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal-sheet">
+    <div class="login-logo">
+      <div class="login-logo-icon">♠</div>
+      <div class="login-logo-name">POKER TRACKER</div>
+    </div>
+    <div class="modal-sub" id="login-sub">Apna registered number daalo</div>
+    <div class="phone-input-wrap">
+      <div class="phone-prefix">+91</div>
+      <input class="phone-input" type="tel" id="phone-input"
+        maxlength="10" placeholder="10-digit number"
+        inputmode="numeric" pattern="[0-9]*"
+        onkeydown="if(event.key==='Enter')app.doLogin()">
+    </div>
+    <div class="login-err" id="login-err"></div>
+    <button class="btn btn-primary btn-full" onclick="app.doLogin()" id="login-btn">Continue →</button>
+    <div style="margin-top:10px;text-align:center">
+      <button class="logout-btn" onclick="app.viewOnly()">Sirf dekhna hai →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PIN MODAL -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔐 Admin PIN</div>
+    <div class="modal-sub" id="pin-sub">Admin verify karne ke liye PIN daalo</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot"></div><div class="pin-dot"></div>
+      <div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <div class="pin-pad" id="pin-pad"></div>
+    <div class="pin-err" id="pin-err"></div>
+    <button class="logout-btn" style="display:block;text-align:center;margin-top:12px;width:100%" onclick="app.closePinModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div id="offline-bar">📵 Offline — cached data dikhaya ja raha hai</div>
+<div id="user-bar">
+  <div>
+    <span id="user-name"></span>
+    <span id="user-role" style="color:var(--sub);font-size:11px;margin-left:6px"></span>
+  </div>
+  <div class="user-bar-right">
+    <button class="logout-btn" onclick="app.doLogout()">Logout</button>
+  </div>
+</div>
+<div class="topbar">
+  <div class="tb-logo">♠ <span>POKER</span></div>
+  <div class="tb-right">
+    <div class="rate-wrap">
+      <div class="rate-label">₹/buy</div>
+      <input class="rate-inp" type="number" id="buying-rate" value="100" min="1" max="99999"
+        onchange="app.onRateChange()">
+    </div>
+    <div class="sync-dot" id="sync-dot"></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div id="tab-board" class="tab active">
+  <div class="section-label">Standings</div>
+  <div class="stat-pills" id="lb-sum"></div>
+  <div id="lb-list"></div>
+</div>
+
+<div id="tab-session" class="tab">
+  <div class="section-label">Who's playing?</div>
+  <div class="ptog-list" id="player-togs"></div>
+  <hr class="div">
+  <div class="col-hdr"><span>Player</span><span>Buyings</span><span>Result ₹</span></div>
+  <div id="sess-entries"></div>
+  <div class="pot-bar">
+    <div><div class="pot-lbl">Total Pot</div><div class="pot-sub" id="pot-sub"></div></div>
+    <div class="pot-val" id="pot-val">₹0</div>
+  </div>
+  <div class="warn-box" id="warn-box"></div>
+  <div class="sess-btns">
+    <button class="btn btn-gold" onclick="app.saveSession()" id="save-btn">💾 Save Session</button>
+    <button class="btn btn-outline" onclick="app.resetSession()">↺ Reset</button>
+  </div>
+</div>
+
+<div id="tab-history" class="tab">
+  <div class="section-label">Past sessions</div>
+  <div id="hist-list"></div>
+</div>
+
+<div id="tab-settle" class="tab">
+  <div class="section-label">Settlement</div>
+  <div class="seg-ctrl">
+    <button class="seg-btn active" id="st-last" onclick="app.setSettleSrc('last')">Last Session</button>
+    <button class="seg-btn" id="st-all"  onclick="app.setSettleSrc('all')">All Time</button>
+  </div>
+  <div id="settle-body"></div>
+  <div id="settle-copy" style="display:none;margin-top:12px">
+    <button class="btn btn-outline btn-full">📋 Copy for WhatsApp</button>
+  </div>
+</div>
+
+<div id="tab-stats" class="tab">
+  <div id="stats-ranking">
+    <div class="section-label">Rankings</div>
+    <div id="stats-ranking-list"></div>
+    <hr class="div">
+    <div class="section-label">P&amp;L Trend</div>
+    <div class="gpbtns" id="graph-btns"></div>
+    <div class="graph-wrap"><canvas id="pnl-canvas" height="200"></canvas></div>
+    <div class="gleg-row" id="graph-leg"></div>
+  </div>
+  <div id="stats-player" style="display:none">
+    <button class="back-btn" onclick="app.backToRanking()">← Rankings</button>
+    <div id="stats-player-body"></div>
+  </div>
+</div>
+
+<div id="tab-trash" class="tab">
+  <div class="section-label">🗑 Recycle Bin <span id="trash-total-badge" style="display:none;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px;font-family:'JetBrains Mono',monospace"></span></div>
+  <div class="trash-seg">
+    <button class="trash-seg-btn active" id="tt-sess" onclick="app.setTrashTab('sessions')">Sessions</button>
+    <button class="trash-seg-btn" id="tt-play" onclick="app.setTrashTab('players')">Players</button>
+  </div>
+  <div id="trash-body"></div>
+</div>
+
+<div id="tab-more" class="tab">
+  <div id="admin-section" style="display:none">
+    <div class="section-label">Manage players</div>
+    <div class="add-row">
+      <input type="text" class="finp" id="new-player-name" placeholder="Naam..." maxlength="30">
+      <input type="tel" class="finp" id="new-player-phone" placeholder="Phone..." maxlength="10" inputmode="numeric" style="max-width:130px">
+      <button class="btn btn-gold btn-sm" onclick="app.addPlayer()">Add</button>
+    </div>
+    <div id="players-list"></div>
+    <hr class="div">
+  </div>
+
+  <div class="section-label">Info</div>
+  <div class="bk-box">
+    <div id="more-stats">—</div>
+    <div>Device: <strong id="more-device-id" style="font-size:10px">—</strong></div>
+  </div>
+
+  <div class="section-label" style="margin-top:4px">Backup</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <button class="btn btn-outline btn-full" onclick="app.exportBackup()">📤 Export JSON</button>
+    <button class="btn btn-outline btn-full" onclick="document.getElementById('imp-file').click()">📥 Import Backup</button>
+    <input type="file" id="imp-file" accept=".json" style="display:none" onchange="app.importBackup(this)">
+    <button class="btn btn-danger btn-full" id="reset-btn" style="display:none" onclick="app.resetAll()">🗑 Reset All Data</button>
+  </div>
+</div>
+
+<div id="tab-activity" class="tab">
+  <div class="section-label">Activity log <span style="color:var(--dim);font-size:9px">(7 din baad auto-delete)</span></div>
+  <div id="activity-list"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="app.sw('board')"    id="nav-board">   <div class="nav-ico">🏆</div><div class="nav-lbl">Board</div></button>
+  <button class="nav-btn"        onclick="app.sw('session')"  id="nav-session">  <div class="nav-ico">🃏</div><div class="nav-lbl">Play</div></button>
+  <button class="nav-btn"        onclick="app.sw('history')"  id="nav-history">  <div class="nav-ico">📜</div><div class="nav-lbl">History</div></button>
+  <button class="nav-btn"        onclick="app.sw('settle')"   id="nav-settle">   <div class="nav-ico">💸</div><div class="nav-lbl">Settle</div></button>
+  <button class="nav-btn"        onclick="app.sw('stats')"    id="nav-stats">    <div class="nav-ico">📊</div><div class="nav-lbl">Stats</div></button>
+  <button class="nav-btn"        onclick="app.sw('trash')"    id="nav-trash">    <div class="nav-ico">🗑</div><div class="nav-lbl">Trash</div></button>
+  <button class="nav-btn"        onclick="app.sw('more')"     id="nav-more">     <div class="nav-ico">⚙️</div><div class="nav-lbl">More</div></button>
+  <button class="nav-btn"        onclick="app.sw('activity')" id="nav-activity"> <div class="nav-ico">📋</div><div class="nav-lbl">Log</div></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { SB_URL, SB_KEY, ADMIN_PIN, CACHE_KEY, LOG_DAYS } from '/js/config.js';
+import { db }             from '/js/db.js';
+import { loginWithPhone, verifyAdminPin, logout, loadAuthCache, clearAuth,
+         currentUser, isAdmin, isMember, canWrite, canDelete, getDeviceId } from '/js/auth.js';
+import { loadAll, loadCache, saveCache, setupRealtime,
+         initNetworkListeners, initSyncDot, players, sessions, pStats } from '/js/sync.js';
+import { sess, resetSess, togglePlayer, changeBuying, setResult,
+         calcPot, saveSession as saveSessionData } from '/js/session.js';
+import { setSettleSrc as _setSettleSrc, renderSettle as _renderSettle } from '/js/settle.js';
+import { softDeleteSession, softDeletePlayer,
+         restoreSession, restorePlayer, purgeSession, purgePlayer } from '/js/trash.js';
+import { logActivity, cleanupOldLogs } from '/js/activity.js';
+import {
+  esc, toast, switchTab, renderAll, updateUserBar,
+  renderBoard, renderSessionTab, renderEntries, renderHistory,
+  renderSettle, renderStats, renderStatsRanking, renderPlayerStats,
+  toggleGraphPlayer, renderActivity, renderTrash, setTrashTab as _setTrashTab,
+  renderMore, renderPlayerList, updateTrashBadge, setSettleSrc,
+} from '/js/ui.js';
+
+// ── PIN numpad ────────────────────────────────────────────
+let pinBuf = '';
+function buildPinPad() {
+  const el = document.getElementById('pin-pad');
+  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k => {
+    if (!k) { el.appendChild(document.createElement('div')); return; }
+    const b = document.createElement('button');
+    b.className = 'pin-key' + (k==='⌫'?' del':'');
+    b.textContent = k;
+    b.onclick = () => pinPress(k);
+    el.appendChild(b);
+  });
+}
+function pinPress(v) {
+  if (v==='⌫') pinBuf = pinBuf.slice(0,-1);
+  else if (pinBuf.length < 4) pinBuf += v;
+  updatePinDots();
+  if (pinBuf.length === 4) setTimeout(checkPin, 150);
+}
+function updatePinDots() {
+  document.querySelectorAll('#pin-dots .pin-dot').forEach((d,i) =>
+    d.classList.toggle('filled', i < pinBuf.length));
+}
+function checkPin() {
+  if (verifyAdminPin(pinBuf)) {
+    closePinModal();
+    updateUserBar();
+    renderMore();
+    updateTrashBadge();
+    document.getElementById('reset-btn').style.display = 'block';
+    toast('🔓 Admin access mila! 👑');
+  } else {
+    document.getElementById('pin-err').textContent = '❌ Wrong PIN!';
+    pinBuf = '';
+    updatePinDots();
+    const m = document.querySelector('.pin-pad');
+    m.style.animation='none'; m.offsetHeight; m.style.animation='shake 0.4s ease';
+  }
+}
+
+// ── Global app object (called from HTML) ──────────────────
+window.app = {
+  sw(name) { switchTab(name); },
+
+  // Auth
+  async doLogin() {
+    const phone = document.getElementById('phone-input').value.trim();
+    const errEl = document.getElementById('login-err');
+    const btn   = document.getElementById('login-btn');
+    if (!/^\d{10}$/.test(phone)) {
+      errEl.textContent = '10-digit number daalo';
+      return;
+    }
+    errEl.textContent = '';
+    btn.disabled = true; btn.textContent = 'Checking...';
+    try {
+      const user = await loginWithPhone(phone);
+      document.getElementById('login-modal').classList.remove('show');
+      updateUserBar();
+      // Admin? ask PIN
+      if (user.is_admin) {
+        pinBuf = '';
+        updatePinDots();
+        document.getElementById('pin-err').textContent = '';
+        document.getElementById('pin-modal').classList.add('show');
+      }
+      renderAll();
+      toast(`Welcome ${esc(user.name)}! 🎉`);
+    } catch(e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Continue →';
+    }
+  },
+
+  viewOnly() {
+    document.getElementById('login-modal').classList.remove('show');
+    renderAll();
+  },
+
+  async doLogout() {
+    if (!confirm('Logout karo?')) return;
+    await logout();
+    updateUserBar();
+    renderAll();
+    document.getElementById('login-modal').classList.add('show');
+    toast('Logged out 👋');
+  },
+
+  closePinModal() { closePinModal(); },
+
+  // Rate
+  onRateChange() {
+    const r = parseInt(document.getElementById('buying-rate').value) || 100;
+    localStorage.setItem('poker_rate', r);
+    renderEntries();
+  },
+
+  // Session
+  toggleP(name) {
+    if (!canWrite()) { toast('🔒 Login karo pehle'); return; }
+    togglePlayer(name);
+    renderSessionTab();
+  },
+  chgBuy(name, d) { changeBuying(name, d); renderEntries(); },
+  onRes(name, v)  { setResult(name, v); renderEntries(); },
+
+  async saveSession() {
+    if (!canWrite()) { toast('🔒 Login karo pehle'); return; }
+    const btn = document.getElementById('save-btn');
+    btn.disabled = true; btn.textContent = 'Saving...';
+    try {
+      const rate = parseInt(document.getElementById('buying-rate').value) || 100;
+      await saveSessionData(rate);
+      await loadAll();
+      resetSess();
+      renderAll();
+      toast('Session saved! 🎉');
+    } catch(e) { toast('❌ ' + e.message); }
+    finally { btn.disabled=false; btn.textContent='💾 Save Session'; }
+  },
+
+  resetSession() {
+    if (!confirm('Current session reset karo?')) return;
+    resetSess();
+    renderSessionTab();
+    toast('Reset ✓');
+  },
+
+  // History
+  async trashSession(id) {
+    if (!canDelete()) { toast('🔒 Sirf admin'); return; }
+    if (!confirm('Session trash mein bhejo?')) return;
+    try {
+      await softDeleteSession(id);
+      await loadAll();
+      renderHistory(); renderBoard(); renderSettle(); renderStats();
+      updateTrashBadge();
+      toast('Session trash mein gaya 🗑');
+    } catch(e) { toast('❌ ' + e.message); }
+  },
+
+  // Settle
+  setSettleSrc(src) { setSettleSrc(src); },
+
+  // Stats
+  showPlayerStats(name) { renderPlayerStats(name); },
+  backToRanking()       { renderStatsRanking(); },
+  togGraph(name)        { toggleGraphPlayer(name); },
+
+  // Trash
+  setTrashTab(t) { _setTrashTab(t); },
+  async restoreSess(id) {
+    if (!confirm('Restore karo?')) return;
+    try { await restoreSession(id); renderTrash(); renderHistory(); renderBoard(); updateTrashBadge(); toast('Restored ♻️'); }
+    catch(e) { toast('❌ '+e.message); }
+  },
+  async purgeSess(id) {
+    if (!confirm('⚠️ Permanently delete? Wapas nahi aayega!')) return;
+    try { await purgeSession(id); renderTrash(); updateTrashBadge(); toast('Deleted 💥'); }
+    catch(e) { toast('❌ '+e.message); }
+  },
+  async restorePlay(id, name) {
+    if (!confirm(`"${name}" restore karo?`)) return;
+    try { await restorePlayer(id, name); renderTrash(); renderMore(); updateTrashBadge(); toast('Restored ♻️'); }
+    catch(e) { toast('❌ '+e.message); }
+  },
+  async purgePlay(id, name) {
+    if (!confirm(`⚠️ "${name}" permanently delete? Wapas nahi aayega!`)) return;
+    try { await purgePlayer(id, name); renderTrash(); updateTrashBadge(); toast('Deleted 💥'); }
+    catch(e) { toast('❌ '+e.message); }
+  },
+
+  // More / Players
+  async addPlayer() {
+    if (!isAdmin) { toast('🔒 Sirf admin'); return; }
+    const nameEl  = document.getElementById('new-player-name');
+    const phoneEl = document.getElementById('new-player-phone');
+    const name  = nameEl.value.trim();
+    const phone = phoneEl.value.trim();
+    if (!name || name.length > 30) { toast('Naam 1-30 characters'); return; }
+    if (!/^\d{10}$/.test(phone)) { toast('10-digit phone number daalo'); return; }
+    if (players.find(p => p.phone === phone)) { toast('Yeh number already registered hai'); return; }
+    try {
+      await db.post('poker_players', { name, phone });
+      await logActivity('player_added', `${name} (${phone})`);
+      await loadAll();
+      nameEl.value=''; phoneEl.value='';
+      renderPlayerList(); renderBoard();
+      toast(`${esc(name)} added ✓`);
+    } catch(e) { toast('❌ '+e.message); }
+  },
+
+  async activatePlayer(id, name) {
+    if (!isAdmin) return;
+    try {
+      await db.rpc('toggle_player_active', { p_player_id: id, p_is_active: true });
+      await logActivity('player_activated', name);
+      await loadAll(); renderPlayerList(); renderSessionTab();
+      toast(`${esc(name)} activated ✓`);
+    } catch(e) { toast('❌ '+e.message); }
+  },
+
+  async deactivatePlayer(id, name) {
+    if (!isAdmin) return;
+    try {
+      await db.rpc('toggle_player_active', { p_player_id: id, p_is_active: false });
+      await logActivity('player_deactivated', name);
+      await loadAll(); renderPlayerList(); renderSessionTab();
+      toast(`${esc(name)} deactivated`);
+    } catch(e) { toast('❌ '+e.message); }
+  },
+
+  async trashPlayer(id, name) {
+    if (!isAdmin) return;
+    if (!confirm(`"${name}" ko trash mein bhejo?`)) return;
+    try {
+      await softDeletePlayer(id, name);
+      await loadAll(); renderPlayerList(); updateTrashBadge();
+      toast(`${esc(name)} trash mein gaya 🗑`);
+    } catch(e) { toast('❌ '+e.message); }
+  },
+
+  // Backup
+  exportBackup() {
+    const blob = new Blob([JSON.stringify({ players, sessions }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `poker-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    toast('Backup downloaded 💾');
+  },
+
+  importBackup(input) {
+    const file = input.files[0]; if (!file) return;
+    if (!confirm('⚠️ Import karo? Current data overwrite ho jaayega')) return;
+    const r = new FileReader();
+    r.onload = e => {
+      try {
+        const d = JSON.parse(e.target.result);
+        if (!d.players || !d.sessions) throw new Error('Invalid format');
+        toast('Restored ✅');
+      } catch { toast('❌ Invalid file'); }
+      input.value = '';
+    };
+    r.readAsText(file);
+  },
+
+  async resetAll() {
+    if (!isAdmin) return;
+    if (!confirm('⚠️ SAARA DATA DELETE HOGA! Pakka?')) return;
+    if (!confirm('Last chance — Wapas nahi aayega!')) return;
+    try {
+      await db.del('poker_entries?id=neq.00000000-0000-0000-0000-000000000000');
+      await db.del('poker_sessions?id=neq.00000000-0000-0000-0000-000000000000');
+      await db.del('poker_players?id=neq.00000000-0000-0000-0000-000000000000');
+      await logActivity('data_reset', 'All data wiped');
+      localStorage.removeItem(CACHE_KEY);
+      await loadAll(); renderAll(); updateTrashBadge();
+      toast('All data deleted 🗑');
+    } catch(e) { toast('❌ '+e.message); }
+  },
+};
+
+// ── Init ──────────────────────────────────────────────────
+function closePinModal() {
+  document.getElementById('pin-modal').classList.remove('show');
+  pinBuf = '';
+  updatePinDots();
+}
+
+async function init() {
+  buildPinPad();
+  initSyncDot(document.getElementById('sync-dot'));
+
+  // Saved rate
+  const savedRate = localStorage.getItem('poker_rate');
+  if (savedRate) document.getElementById('buying-rate').value = savedRate;
+
+  // Load data
+  let loaded = false;
+  if (SB_URL && SB_URL !== '__SB_URL__') {
+    try {
+      await loadAll();
+      loaded = true;
+    } catch(e) {
+      console.warn('Supabase failed, using cache', e);
+    }
+  }
+  if (!loaded) loadCache();
+
+  // Auth
+  const hasCachedAuth = loadAuthCache();
+
+  // Cleanup old logs
+  cleanupOldLogs();
+
+  // Render
+  renderAll();
+  updateUserBar();
+
+  // Show login if not authed
+  if (!hasCachedAuth) {
+    document.getElementById('login-modal').classList.add('show');
+    document.getElementById('phone-input').focus();
+  }
+
+  // Realtime
+  setupRealtime(() => { renderAll(); updateTrashBadge(); });
+
+  // Network
+  initNetworkListeners(() => renderAll());
+
+  // Hide loader
+  const loader = document.getElementById('loader');
+  loader.classList.add('hide');
+  setTimeout(() => loader.style.display = 'none', 400);
+}
+
+init();
+</script>
+
+<!-- PWA -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

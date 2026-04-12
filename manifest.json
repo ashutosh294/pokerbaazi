@@ -1,0 +1,20 @@
+{
+  "name": "Poker Tracker",
+  "short_name": "Poker",
+  "description": "Track your poker sessions, standings & settlements",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "finance"],
+  "prefer_related_applications": false
+}
