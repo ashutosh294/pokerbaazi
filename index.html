@@ -188,8 +188,6 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .actd{color:var(--sub);font-size:11px;font-family:'JetBrains Mono',monospace}
 .actm{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:3px}
 @media(max-width:360px){.tam{font-size:14px}.pv{font-size:22px}.lnet{font-size:15px}}
-#installBtn{display:none;align-items:center;gap:5px;background:var(--gold-bg);border:1.5px solid var(--gold);border-radius:var(--rs);color:var(--gold);font-family:inherit;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
-#installBtn:active{background:var(--gold);color:#fff}
 </style>
 </head>
 <body>
@@ -220,7 +218,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 
 <div id="ob">&#128245; Offline &mdash; cached data dikhaya ja raha hai</div>
 <div id="ub"><div><span id="un"></span><span id="urol" style="color:var(--sub);font-size:11px;margin-left:6px"></span></div><button class="lob" onclick="doLogout()">Logout</button></div>
-<div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><button id="installBtn" onclick="installApp()">&#128247; Install</button><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div>
+<div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div>
 
 <div id="tab-board" class="tab active">
   <div class="sl">Standings</div>
@@ -363,16 +361,39 @@ function loadAC(){
 function saveAC(){localStorage.setItem(AK,JSON.stringify({deviceId:getDev(),user:cu,isAdm,isMem}));}
 function clearAC(){localStorage.removeItem(AK);cu=null;isAdm=false;isMem=false;}
 
-async function doLogin(){
+async function doLogin(force=false){
   const ph=document.getElementById('phi').value.trim();
   const er=document.getElementById('lerr'),btn=document.getElementById('lbtn');
   if(!/^\d{10}$/.test(ph)){er.textContent='10-digit number daalo';return;}
   er.textContent='';btn.disabled=true;btn.textContent='Checking...';
   try{
-    const res=await sb.rpc('player_login',{p_phone:ph,p_device_id:getDev()});
+    // force=true hone par device_id forcefully update karo
+    const res=await sb.rpc('player_login',{p_phone:ph,p_device_id:getDev(),p_force:force});
     if(!res?.success){
       if(res?.error==='not_found')throw new Error('Yeh number registered nahi. Admin se contact karo.');
-      if(res?.error==='already_logged_in')throw new Error('Already kisi aur device pe login hai. Pehle wahan logout karo.');
+      if(res?.error==='already_logged_in'){
+        // Same device check — agar device_id match kare toh auto force login
+        const forceRes=await sb.rpc('player_login',{p_phone:ph,p_device_id:getDev(),p_force:true});
+        if(forceRes?.success){
+          cu={id:forceRes.id,name:forceRes.name,is_admin:forceRes.is_admin};isMem=true;isAdm=false;saveAC();
+          document.getElementById('lm').classList.remove('show');
+          updateUB();
+          if(forceRes.is_admin){pb='';updPD();document.getElementById('perr').textContent='';document.getElementById('pm').classList.add('show');}
+          renderAll();toast(`Welcome back ${esc(forceRes.name)}! 🎉`);
+          return;
+        }
+        // Dusra device — confirm karke force login
+        const ok=confirm('⚠️ Yeh account kisi aur device pe already logged in hai.\n\nFir bhi is device pe login karna chahte ho?');
+        if(!ok){er.textContent='Login cancel kiya.';return;}
+        const fr=await sb.rpc('player_login',{p_phone:ph,p_device_id:getDev(),p_force:true});
+        if(!fr?.success)throw new Error('Force login fail hua. Dobara try karo.');
+        cu={id:fr.id,name:fr.name,is_admin:fr.is_admin};isMem=true;isAdm=false;saveAC();
+        document.getElementById('lm').classList.remove('show');
+        updateUB();
+        if(fr.is_admin){pb='';updPD();document.getElementById('perr').textContent='';document.getElementById('pm').classList.add('show');}
+        renderAll();toast(`Welcome ${esc(fr.name)}! 🎉`);
+        return;
+      }
       throw new Error('Login fail hua. Dobara try karo.');
     }
     cu={id:res.id,name:res.name,is_admin:res.is_admin};isMem=true;isAdm=false;saveAC();
@@ -670,27 +691,6 @@ async function init(){
 
 init();
 </script>
-<script>
-let _dp=null;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();_dp=e;
-  const b=document.getElementById('installBtn');
-  if(b)b.style.display='flex';
-});
-async function installApp(){
-  if(!_dp)return;
-  _dp.prompt();
-  const{outcome}=await _dp.userChoice;
-  _dp=null;
-  const b=document.getElementById('installBtn');
-  if(b)b.style.display='none';
-}
-window.addEventListener('appinstalled',()=>{
-  _dp=null;
-  const b=document.getElementById('installBtn');
-  if(b)b.style.display='none';
-});
-if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
-</script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});</script>
 </body>
 </html>
