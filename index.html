@@ -98,7 +98,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .bo{background:transparent;border:1.5px solid var(--border2);color:var(--text)}.bd{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,0.2)}
 .bf{width:100%}.btn:disabled{opacity:0.45;cursor:not-allowed;transform:none}.bsm{font-size:12px;padding:7px 12px;border-radius:var(--rs)}
 .finp{width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:inherit;font-size:14px;padding:11px 14px;outline:none;transition:border-color 0.2s}
-.finp:focus{border-color:var(--gold);background:#fff}.finp::placeholder{color:var(--dim)}
+.finp:focus{border-color:var(--gold);background:var(--surface)}.finp::placeholder{color:var(--dim)}
 .sps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .sp{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 8px;text-align:center;box-shadow:var(--sh)}
 .spv{font-size:18px;font-weight:700;color:var(--text)}.spk{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px;font-family:'JetBrains Mono',monospace}
@@ -124,7 +124,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .bb:active{background:var(--gold-bg)}.bct{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--gold);min-width:20px;text-align:center}
 .ri2{width:90px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:7px 8px;text-align:right;outline:none;transition:border-color 0.2s;-moz-appearance:textfield}
 .ri2::-webkit-outer-spin-button,.ri2::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.ri2:focus{border-color:var(--gold);background:#fff}
+.ri2:focus{border-color:var(--gold);background:var(--bg)}
 .pb{display:flex;justify-content:space-between;align-items:center;background:var(--gold-bg);border:1px solid rgba(200,146,42,0.25);border-radius:var(--r);padding:12px 16px;margin:12px 0}
 .pl{font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:1.5px;font-family:'JetBrains Mono',monospace}
 .ps{font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:3px}
@@ -958,7 +958,19 @@ async function doAddP(){
 }
 async function actP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:true});await logA('player_activated',name);await loadAll();renderPList();renderSess();toast(`✅ ${esc(name)} is back at the table!`);}catch(e){toast('❌ '+e.message);}}
 async function deactP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:false});await logA('player_deactivated',name);await loadAll();renderPList();renderSess();toast(`💤 ${esc(name)} sat out!`);}catch(e){toast('❌ '+e.message);}}
-async function trPlay(id,name){if(!confirm(`"${name}" ko muck pile mein bhejo?`))return;try{await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:new Date().toISOString(),deleted_by:cu?.name||'Admin',device_id:null});await logA('player_deleted',name);await loadAll();renderPList();updTrashBadge();toast(`🗑 ${esc(name)} got bounced!`);}catch(e){toast('❌ '+e.message);}}
+async function trPlay(id,name){if(!confirm(`"${name}" ko muck pile mein bhejo?`))return;
+  // Optimistic UI — turant list se hatao
+  players=players.filter(p=>p.id!==id);
+  renderPList();
+  try{
+    await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:new Date().toISOString(),deleted_by:cu?.name||'Admin',device_id:null});
+    await logA('player_deleted',name);
+    await loadAll();renderPList();updTrashBadge();toast(`🗑 ${esc(name)} got bounced!`);
+  }catch(e){
+    // Revert on error
+    await loadAll();renderPList();toast('❌ '+e.message);
+  }
+}
 
 function expBk(){const b=new Blob([JSON.stringify({players,sessions},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`poker-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('💾 Deck exported!');}
 function impBk(input){const f=input.files[0];if(!f)return;if(!confirm('⚠️ Import karo? Current deck overwrite hoga'))return;const r=new FileReader();r.onload=e=>{try{JSON.parse(e.target.result);toast('✅ Back in action!');}catch{toast('❌ Invalid file');}input.value='';};r.readAsText(f);}
