@@ -926,6 +926,20 @@ async function renderTrash(){
         const r2=(em[s.id]||[]).map(e=>{const cls=e.result>0?'pos':e.result<0?'neg':'zero';return`<div class="hr"><span class="hn">${esc(e.player_name)}</span><span class="hbuy">${e.buyings}×</span><span class="hnet ${cls}">${e.result>0?'+':''}₹${fmt(e.result)}</span></div>`;}).join('');
         return`<div class="trca" style="animation-delay:${i*50}ms"><div class="trh"><div><div class="trt">${ds} · ₹${fmt(pot)} pot</div><div class="trm">🗑 ${dd} by ${esc(s.deleted_by||'Admin')}</div></div><div class="tra"><button class="tbtn res" data-id="${esc(s.id)}" onclick="resSess(this.dataset.id)">♻️</button><button class="tbtn pur" data-id="${esc(s.id)}" onclick="purSess(this.dataset.id)">💥</button></div></div><div class="hbd">${r2}</div><div class=\"chat-wrap\"><div id=\"cm-${s.id}\">${renderComments(s.id)}</div>${canW()?"<div class=\"chat-inp\"><input id=\"ci-${s.id}\" type=\"text\" placeholder=\"Roast daalo 😄\" maxlength=\"100\"><button onclick=\"submitComment('"+s.id+"','ci-"+s.id+"','cm-"+s.id+"')\">Send</button></div>":""}</div></div>`;
         }).join('');
+    } else {
+      // Players tab
+      const rows = await sb.get('poker_players?deleted_at=not.is.null&order=deleted_at.desc&select=id,name,phone,deleted_at,deleted_by');
+      if(!rows?.length){el.innerHTML=emp('✨','Koi player trash mein nahi');return;}
+      el.innerHTML=rows.map((p,i)=>{
+        const dd=new Date(p.deleted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+        return`<div class="trp" style="animation-delay:${i*50}ms">
+          <div><div class="tpn">🃏 ${esc(p.name)}</div><div class="trm">🗑 ${dd} by ${esc(p.deleted_by||'Admin')}</div></div>
+          <div class="tra">
+            <button class="tbtn res" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="resPlay(this.dataset.id,this.dataset.n)">♻️ Restore</button>
+            <button class="tbtn pur" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="purPlay(this.dataset.id,this.dataset.n)">💥 Delete</button>
+          </div>
+        </div>`;
+      }).join('');
     }
   }catch(e){el.innerHTML=`<div style="color:var(--red);font-size:12px;padding:12px">Error: ${e.message}</div>`;}
 }
