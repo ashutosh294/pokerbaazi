@@ -205,10 +205,38 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .actm{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:3px}
 @media(max-width:360px){.tam{font-size:14px}.pv{font-size:22px}.lnet{font-size:15px}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+/* Head to Head */
+.h2h-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--sh);margin-bottom:10px}
+.h2h-title{font-size:13px;font-weight:700;text-align:center;margin-bottom:12px;color:var(--text)}
+.h2h-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px}
+.h2h-player{text-align:center}
+.h2h-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.h2h-score{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.h2h-score.win{color:var(--green)}.h2h-score.loss{color:var(--red)}.h2h-score.tie{color:var(--dim)}
+.h2h-mid{font-size:11px;font-weight:700;color:var(--dim);text-align:center}
+.h2h-bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.h2h-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:99px;transition:width 0.6s ease}
+.h2h-meta{font-size:10px;color:var(--dim);text-align:center;font-family:'JetBrains Mono',monospace}
+.h2h-btn{background:var(--bg);border:1.5px solid var(--border2);border-radius:99px;color:var(--sub);cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;padding:5px 13px;transition:all 0.15s}
+.h2h-btn.sel{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);font-weight:600}
 .skel{background:linear-gradient(90deg,var(--border) 25%,var(--border2) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--rs);height:14px;margin-bottom:8px}
 .skel.tall{height:60px}.skel.short{width:60%;height:10px}
 /* Skeleton loading */
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+/* Head to Head */
+.h2h-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--sh);margin-bottom:10px}
+.h2h-title{font-size:13px;font-weight:700;text-align:center;margin-bottom:12px;color:var(--text)}
+.h2h-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px}
+.h2h-player{text-align:center}
+.h2h-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.h2h-score{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.h2h-score.win{color:var(--green)}.h2h-score.loss{color:var(--red)}.h2h-score.tie{color:var(--dim)}
+.h2h-mid{font-size:11px;font-weight:700;color:var(--dim);text-align:center}
+.h2h-bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.h2h-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:99px;transition:width 0.6s ease}
+.h2h-meta{font-size:10px;color:var(--dim);text-align:center;font-family:'JetBrains Mono',monospace}
+.h2h-btn{background:var(--bg);border:1.5px solid var(--border2);border-radius:99px;color:var(--sub);cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;padding:5px 13px;transition:all 0.15s}
+.h2h-btn.sel{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);font-weight:600}
 .skel{background:linear-gradient(90deg,var(--border) 25%,var(--border2) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--rs);height:14px;margin-bottom:8px}
 .skel.tall{height:60px}.skel.short{width:60%;height:10px}
 /* Dark mode toggle */
@@ -257,6 +285,20 @@ body.dark::after{opacity:0.07}
 .report-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .report-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
 .report-row:last-child{border-bottom:none}
+/* Head to Head */
+.h2h-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--sh);margin-bottom:10px}
+.h2h-title{font-size:13px;font-weight:700;text-align:center;margin-bottom:12px;color:var(--text)}
+.h2h-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px}
+.h2h-player{text-align:center}
+.h2h-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.h2h-score{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.h2h-score.win{color:var(--green)}.h2h-score.loss{color:var(--red)}.h2h-score.tie{color:var(--dim)}
+.h2h-mid{font-size:11px;font-weight:700;color:var(--dim);text-align:center}
+.h2h-bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.h2h-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:99px;transition:width 0.6s ease}
+.h2h-meta{font-size:10px;color:var(--dim);text-align:center;font-family:'JetBrains Mono',monospace}
+.h2h-btn{background:var(--bg);border:1.5px solid var(--border2);border-radius:99px;color:var(--sub);cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;padding:5px 13px;transition:all 0.15s}
+.h2h-btn.sel{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);font-weight:600}
 </style>
 </head>
 <body>
@@ -348,6 +390,12 @@ body.dark::after{opacity:0.07}
     <div class="gpb" id="gpbtns"></div>
     <div class="gw"><canvas id="pc" height="200"></canvas></div>
     <div class="glr" id="gleg"></div>
+    <hr class="dv">
+    <div class="sl">⚔️ Head-to-Head</div>
+    <div id="h2h-pick" style="margin-bottom:10px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="h2h-btns"></div>
+    </div>
+    <div id="h2h-result"></div>
     <hr class="dv">
     <div class="sl">📅 Weekly Report</div>
     <div id="weekly-report"></div>
@@ -675,7 +723,7 @@ function sw(name){
   if(name==='session')renderSess();
   else if(name==='history')renderHist();
   else if(name==='settle')renderSettle();
-  else if(name==='stats'){renderStats();renderWeeklyReport();renderHOF();}
+  else if(name==='stats'){renderStats();renderWeeklyReport();renderHOF();renderH2H();}
   else if(name==='trash')renderTrash();
   else if(name==='more')renderMore();
   else if(name==='activity')renderActivity();
@@ -1130,6 +1178,126 @@ function renderHOF(){
   </div>`;
 }
 
+// ── HEAD TO HEAD ────────────────────────────────────────
+let _h2hSel=[];
+function renderH2H(){
+  const btns=document.getElementById('h2h-btns');
+  const result=document.getElementById('h2h-result');
+  if(!btns||!result)return;
+  const pl=players.filter(p=>p.is_active!==false);
+  if(pl.length<2){result.innerHTML='<div class="hint">2+ players chahiye</div>';return;}
+
+  // Player selection buttons
+  btns.innerHTML=pl.map(p=>`<button class="h2h-btn${_h2hSel.includes(p.name)?' sel':''}" 
+    onclick="selH2H('${esc(p.name)}')">${esc(p.name)}</button>`).join('');
+
+  if(_h2hSel.length!==2){
+    result.innerHTML=`<div class="hint" style="padding:16px 0">Koi 2 players select karo ⚔️</div>`;
+    return;
+  }
+
+  const [pA,pB]=_h2hSel;
+  // Find sessions where both played
+  const shared=sessions.filter(s=>{
+    const names=s.entries.map(e=>e.player_name);
+    return names.includes(pA)&&names.includes(pB);
+  });
+
+  if(!shared.length){
+    result.innerHTML=`<div class="hint">Inke beech koi session nahi mila</div>`;
+    return;
+  }
+
+  let wA=0,wB=0,tie=0,netA=0,netB=0,bigPotA=0,bigPotB=0;
+  shared.forEach(s=>{
+    const eA=s.entries.find(e=>e.player_name===pA);
+    const eB=s.entries.find(e=>e.player_name===pB);
+    if(!eA||!eB)return;
+    const rA=Number(eA.result),rB=Number(eB.result);
+    netA+=rA;netB+=rB;
+    if(rA>rB){wA++;if(rA>bigPotA)bigPotA=rA;}
+    else if(rB>rA){wB++;if(rB>bigPotB)bigPotB=rB;}
+    else tie++;
+  });
+
+  const total=wA+wB+tie;
+  const pctA=total>0?Math.round(wA/total*100):0;
+  const barW=Math.max(5,Math.min(95,pctA));
+  const clsA=wA>wB?'win':wA<wB?'loss':'tie';
+  const clsB=wB>wA?'win':wB<wA?'loss':'tie';
+
+  result.innerHTML=`<div class="h2h-wrap">
+    <div class="h2h-title">⚔️ ${esc(pA)} vs ${esc(pB)}</div>
+    <div class="h2h-vs">
+      <div class="h2h-player">
+        <div class="h2h-name">${esc(pA)}</div>
+        <div class="h2h-score ${clsA}">${wA}</div>
+        <div style="font-size:10px;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-top:2px">${netA>0?'+':''}₹${netA.toLocaleString('en-IN')}</div>
+      </div>
+      <div class="h2h-mid">${total} hands<br>together<br>${tie>0?tie+' ties':''}</div>
+      <div class="h2h-player">
+        <div class="h2h-name">${esc(pB)}</div>
+        <div class="h2h-score ${clsB}">${wB}</div>
+        <div style="font-size:10px;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-top:2px">${netB>0?'+':''}₹${netB.toLocaleString('en-IN')}</div>
+      </div>
+    </div>
+    <div class="h2h-bar"><div class="h2h-bar-fill" style="width:${barW}%"></div></div>
+    <div class="h2h-meta">${esc(pA)} ${pctA}% · ${esc(pB)} ${100-pctA}% · ${total} sessions together</div>
+    ${bigPotA>0||bigPotB>0?`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;font-family:'JetBrains Mono',monospace">
+      <span style="color:var(--green)">Best win ${esc(pA)}: +₹${bigPotA.toLocaleString('en-IN')}</span>
+      <span style="color:var(--green)">Best win ${esc(pB)}: +₹${bigPotB.toLocaleString('en-IN')}</span>
+    </div>`:''}
+  </div>`;
+}
+function selH2H(name){
+  if(_h2hSel.includes(name)){
+    _h2hSel=_h2hSel.filter(n=>n!==name);
+  } else {
+    if(_h2hSel.length>=2)_h2hSel.shift();
+    _h2hSel.push(name);
+  }
+  renderH2H();
+}
+
+// ── BACKGROUND SYNC ─────────────────────────────────────
+async function saveOffline(url, method, headers, body) {
+  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return false;
+  return new Promise(res => {
+    const ch = new MessageChannel();
+    ch.port1.onmessage = e => res(e.data.saved);
+    navigator.serviceWorker.controller.postMessage(
+      { type: 'SAVE_OFFLINE', payload: { url, method, headers, body } },
+      [ch.port2]
+    );
+  });
+}
+
+// Listen for sync success
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', async e => {
+    if (e.data?.type === 'SYNC_SUCCESS') {
+      await loadAll();
+      renderAll();
+      toast('🔄 Offline session sync ho gaya! ✅');
+    }
+  });
+}
+
+// Pending sync badge
+async function checkPendingSync() {
+  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
+  const ch = new MessageChannel();
+  ch.port1.onmessage = e => {
+    const count = e.data?.count || 0;
+    const ob = document.getElementById('ob');
+    if (count > 0 && ob) {
+      ob.style.display = 'block';
+      ob.textContent = `📵 Offline — ${count} session(s) sync pending`;
+    }
+  };
+  navigator.serviceWorker.controller.postMessage({ type: 'GET_PENDING' }, [ch.port2]);
+}
+
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&cu){
     const la=parseInt(localStorage.getItem(LAST_ACTIVE_KEY)||'0');
@@ -1145,6 +1313,7 @@ async function init(){
   const authed=loadAC();updateUB();
   if(SB_URL)cleanLogs();
   renderAll();
+  checkPendingSync();
   if(!authed){document.getElementById('lm').classList.add('show');document.getElementById('phi').focus();}
   setupRT();
 
