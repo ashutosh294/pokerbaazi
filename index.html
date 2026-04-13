@@ -204,6 +204,13 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .actd{color:var(--sub);font-size:11px;font-family:'JetBrains Mono',monospace}
 .actm{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:3px}
 @media(max-width:360px){.tam{font-size:14px}.pv{font-size:22px}.lnet{font-size:15px}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skel{background:linear-gradient(90deg,var(--border) 25%,var(--border2) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--rs);height:14px;margin-bottom:8px}
+.skel.tall{height:60px}.skel.short{width:60%;height:10px}
+/* Skeleton loading */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skel{background:linear-gradient(90deg,var(--border) 25%,var(--border2) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--rs);height:14px;margin-bottom:8px}
+.skel.tall{height:60px}.skel.short{width:60%;height:10px}
 /* Dark mode toggle */
 .dm-btn{background:none;border:1px solid var(--border2);border-radius:99px;color:var(--sub);font-size:14px;padding:4px 10px;cursor:pointer;transition:all 0.2s}
 .dm-btn:hover{border-color:var(--gold);color:var(--gold)}
@@ -654,19 +661,54 @@ function chkPin(){
 }
 function closePinModal(){document.getElementById('pm').classList.remove('show');pb='';updPD();}
 
+let _activeTab='board';
 function sw(name){
+  if(_activeTab===name)return; // Same tab pe click — skip
+  _activeTab=name;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+name)?.classList.add('active');
   document.getElementById('nav-'+name)?.classList.add('active');
-  if(name==='session')renderSess();if(name==='history')renderHist();if(name==='settle')renderSettle();
-  if(name==='stats')renderStats();if(name==='trash')renderTrash();if(name==='more')renderMore();if(name==='activity')renderActivity();
+  // Haptic feedback
+  if(navigator.vibrate)navigator.vibrate(8);
+  // Lazy render — sirf active tab
+  if(name==='session')renderSess();
+  else if(name==='history')renderHist();
+  else if(name==='settle')renderSettle();
+  else if(name==='stats'){renderStats();renderWeeklyReport();renderHOF();}
+  else if(name==='trash')renderTrash();
+  else if(name==='more')renderMore();
+  else if(name==='activity')renderActivity();
+  else if(name==='board')renderBoard();
 }
-function renderAll(){renderBoard();renderSess();renderHist();renderSettle();renderStats();renderMore();updTrashBadge();renderWeeklyReport();renderHOF();}
-function onRateChange(){const r=parseInt(document.getElementById('br').value)||100;localStorage.setItem(RK,r);renderEnts();}
+function renderAll(){
+  renderBoard(); // Always render board (default tab)
+  // Sirf active tab render karo
+  if(_activeTab==='session')renderSess();
+  else if(_activeTab==='history')renderHist();
+  else if(_activeTab==='settle')renderSettle();
+  else if(_activeTab==='stats'){renderStats();renderWeeklyReport();renderHOF();}
+  else if(_activeTab==='trash')renderTrash();
+  else if(_activeTab==='more')renderMore();
+  else if(_activeTab==='activity')renderActivity();
+  updTrashBadge();
+}
+let _rateTimer=null;
+function onRateChange(){
+  clearTimeout(_rateTimer);
+  _rateTimer=setTimeout(()=>{
+    const r=parseInt(document.getElementById('br').value)||100;
+    localStorage.setItem(RK,r);renderEnts();
+  },300);
+}
 
 function renderBoard(){
   const el=document.getElementById('lbl'),sum=document.getElementById('lbs');if(!el)return;
+  if(!pStats.length&&!sessions.length){sum.innerHTML='<div class="skel tall"></div>';el.innerHTML='<div class="skel"></div><div class="skel short"></div><div class="skel"></div>';return;}
+  if(!pStats.length&&!sessions.length){
+    sum.innerHTML='<div class="skel tall"></div>';
+    el.innerHTML='<div class="skel"></div><div class="skel short"></div><div class="skel"></div><div class="skel short"></div>';
+  }
   const tp=sessions.reduce((s,ss)=>s+ss.entries.reduce((a,e)=>a+e.buyings,0)*ss.buying_rate,0);
   sum.innerHTML=`<div class="sp"><div class="spv">${sessions.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">₹${fmt(tp)}</div><div class="spk">Total pot</div></div><div class="sp"><div class="spv">${players.length}</div><div class="spk">Players</div></div>`;
   if(!pStats.length){el.innerHTML=emp('🎰','No hands played yet. Deal em up!');return;}
@@ -1105,6 +1147,18 @@ async function init(){
   renderAll();
   if(!authed){document.getElementById('lm').classList.add('show');document.getElementById('phi').focus();}
   setupRT();
+
+  const _tabOrder=['board','session','history','settle','stats','more','activity'];
+  let _tx=0,_ty=0;
+  document.addEventListener('touchstart',e=>{_tx=e.touches[0].clientX;_ty=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-_tx,dy=e.changedTouches[0].clientY-_ty;
+    if(Math.abs(dx)>65&&Math.abs(dx)>Math.abs(dy)*1.5){
+      const ci=_tabOrder.indexOf(_activeTab);
+      if(dx<0&&ci<_tabOrder.length-1)sw(_tabOrder[ci+1]);
+      else if(dx>0&&ci>0)sw(_tabOrder[ci-1]);
+    }
+  },{passive:true});
   window.addEventListener('online',async()=>{document.getElementById('ob').style.display='none';await loadAll();renderAll();});
   window.addEventListener('offline',()=>{document.getElementById('ob').style.display='block';setSync('err');});
   const ld=document.getElementById('loader');ld.classList.add('hide');setTimeout(()=>ld.style.display='none',400);
