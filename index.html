@@ -122,7 +122,8 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .bc{display:flex;align-items:center;gap:5px;min-width:84px;justify-content:center}
 .bb{background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:16px;padding:3px 10px;touch-action:manipulation;transition:all 0.1s}
 .bb:active{background:var(--gold-bg)}.bct{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--gold);min-width:20px;text-align:center}
-.ri2{width:84px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:7px 8px;text-align:right;outline:none;transition:border-color 0.2s}
+.ri2{width:90px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:7px 8px;text-align:right;outline:none;transition:border-color 0.2s;-moz-appearance:textfield}
+.ri2::-webkit-outer-spin-button,.ri2::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .ri2:focus{border-color:var(--gold);background:#fff}
 .pb{display:flex;justify-content:space-between;align-items:center;background:var(--gold-bg);border:1px solid rgba(200,146,42,0.25);border-radius:var(--r);padding:12px 16px;margin:12px 0}
 .pl{font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:1.5px;font-family:'JetBrains Mono',monospace}
@@ -207,7 +208,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .dm-btn{background:none;border:1px solid var(--border2);border-radius:99px;color:var(--sub);font-size:14px;padding:4px 10px;cursor:pointer;transition:all 0.2s}
 .dm-btn:hover{border-color:var(--gold);color:var(--gold)}
 /* Poker card background */
-body::before{content:'🂡 🂱 🃁 🃑 🂢 🂲 🃂 🃒 🂣 🂳 🃃 🃓 🂤 🂴 🃄 🃔 🂥 🂵 🃅 🃕 🂦 🂶 🃆 🃖 🂧 🂷 🃇 🃗 🂨 🂸 🃈 🃘 🂩 🂹 🃉 🃙 🂪 🂺 🃊 🃚 🂫 🂻 🃋 🃛 🂭 🂽 🃍 🃝 🂮 🂾 🃎 🃞 🂡';position:fixed;top:0;left:0;width:100%;height:100%;font-size:28px;line-height:1.8;letter-spacing:4px;word-spacing:8px;opacity:0.025;pointer-events:none;z-index:0;overflow:hidden;color:var(--gold)}
+body::before{content:'♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10';position:fixed;top:0;left:0;width:100%;height:100%;font-size:22px;line-height:2.2;letter-spacing:6px;word-spacing:10px;opacity:0.035;pointer-events:none;z-index:0;overflow:hidden;color:var(--gold);word-break:break-all}
 body.dark::before{opacity:0.04}
 .tab{position:relative;z-index:1}
 /* Chat/Comments */
@@ -673,7 +674,7 @@ function renderEnts(){
   const el=document.getElementById('sents');if(!el)return;
   const rate=parseInt(document.getElementById('br').value)||100;
   if(!sess.a.length){el.innerHTML=`<div class="hint" style="padding:24px 0">Players select karo ↑</div>`;document.getElementById('ptval').textContent='₹0';document.getElementById('ptsub').textContent='';document.getElementById('wbox').style.display='none';return;}
-  el.innerHTML=sess.a.map(p=>{const b=sess.b[p]||0,r=sess.r[p]!==undefined?sess.r[p]:'',ep=esc(p);return`<div class="er"><div class="en">${ep}</div><div class="bc"><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,-1)">−</button><span class="bct" id="bc-${ep}">${b}</span><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,1)">+</button></div><input class="ri2" type="number" id="res-${ep}" value="${r}" placeholder="±₹" oninput="onR('${ep}',this.value)"></div>`;}).join('');
+  el.innerHTML=sess.a.map(p=>{const b=sess.b[p]||0,r=sess.r[p]!==undefined?sess.r[p]:'',ep=esc(p);return`<div class="er"><div class="en">${ep}</div><div class="bc"><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,-1)">−</button><span class="bct" id="bc-${ep}">${b}</span><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,1)">+</button></div><input class="ri2" type="text" inputmode="decimal" id="res-${ep}" value="${r}" placeholder="±₹" oninput="onR('${ep}',this.value)"></div>`;}).join('');
   const tot=sess.a.reduce((s,p)=>s+(sess.b[p]||0),0);
   document.getElementById('ptval').textContent=`₹${fmt(tot*rate)}`;document.getElementById('ptsub').textContent=`${tot} buyings × ₹${rate}`;
   const af=sess.a.length>0&&sess.a.every(p=>sess.r[p]!==''&&sess.r[p]!==undefined);
@@ -681,7 +682,7 @@ function renderEnts(){
   if(af){const sum=sess.a.reduce((s,p)=>s+Number(sess.r[p]||0),0);if(Math.abs(sum)>1){wb.style.display='block';wb.textContent=`⚠️ Sum = ₹${sum} (₹0 hona chahiye)`;}else wb.style.display='none';}else wb.style.display='none';
 }
 function chgB(n,d){sess.b[n]=Math.max(0,Math.min(100,(sess.b[n]||0)+d));const e=document.getElementById('bc-'+n);if(e)e.textContent=sess.b[n];renderEnts();}
-function onR(n,v){sess.r[n]=v===''?'':Number(v);renderEnts();}
+function onR(n,v){sess.r[n]=v===''?'':v;renderEnts();}
 async function doSave(){
   if(!canW()){toast('🔒 Ante up first — login karo!');return;}if(!sess.a.length){toast('⚠️ Koi player deal nahi kiya!');return;}
   const btn=document.getElementById('svbtn');btn.disabled=true;btn.textContent='Saving...';
