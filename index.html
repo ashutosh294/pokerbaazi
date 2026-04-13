@@ -208,9 +208,25 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .dm-btn{background:none;border:1px solid var(--border2);border-radius:99px;color:var(--sub);font-size:14px;padding:4px 10px;cursor:pointer;transition:all 0.2s}
 .dm-btn:hover{border-color:var(--gold);color:var(--gold)}
 /* Poker card background */
-body::before{content:'ROYAL FLUSH  A♠ K♠ Q♠ J♠ 10♠     STRAIGHT FLUSH  9♥ 8♥ 7♥ 6♥ 5♥     FOUR OF A KIND  A♣ A♦ A♥ A♠     FULL HOUSE  K♠ K♥ K♦ J♣ J♥     FLUSH  A♦ J♦ 9♦ 5♦ 2♦     STRAIGHT  10♠ 9♥ 8♦ 7♣ 6♠     THREE OF A KIND  Q♠ Q♥ Q♦     TWO PAIR  J♠ J♥ 9♣ 9♦     ONE PAIR  A♠ A♥     HIGH CARD  A♠ K♦';position:fixed;top:0;left:0;width:100%;height:100%;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;line-height:3.2;letter-spacing:3px;word-spacing:6px;opacity:0.055;pointer-events:none;z-index:0;overflow:hidden;color:var(--gold);word-break:break-all;white-space:normal}
-body.dark::before{opacity:0.08}
-.tab{position:relative;z-index:1}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:
+  radial-gradient(ellipse 120px 120px at 15% 20%, rgba(200,146,42,0.06) 0%, transparent 70%),
+  radial-gradient(ellipse 80px 80px at 85% 75%, rgba(200,146,42,0.05) 0%, transparent 70%),
+  radial-gradient(ellipse 100px 100px at 50% 50%, rgba(200,146,42,0.04) 0%, transparent 70%),
+  radial-gradient(ellipse 60px 60px at 25% 80%, rgba(200,146,42,0.04) 0%, transparent 70%),
+  radial-gradient(ellipse 90px 90px at 75% 15%, rgba(200,146,42,0.05) 0%, transparent 70%)}
+body.dark::before{
+background-image:
+  radial-gradient(ellipse 120px 120px at 15% 20%, rgba(200,146,42,0.1) 0%, transparent 70%),
+  radial-gradient(ellipse 80px 80px at 85% 75%, rgba(200,146,42,0.09) 0%, transparent 70%),
+  radial-gradient(ellipse 100px 100px at 50% 50%, rgba(200,146,42,0.08) 0%, transparent 70%),
+  radial-gradient(ellipse 60px 60px at 25% 80%, rgba(200,146,42,0.08) 0%, transparent 70%),
+  radial-gradient(ellipse 90px 90px at 75% 15%, rgba(200,146,42,0.09) 0%, transparent 70%)}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.04;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Ctext x='10' y='50' font-size='36' fill='%23c8922a' opacity='0.8' font-family='serif'%3E%E2%99%A0%3C/text%3E%3Ctext x='110' y='50' font-size='36' fill='%23c8922a' opacity='0.5' font-family='serif'%3E%E2%99%A5%3C/text%3E%3Ctext x='10' y='130' font-size='36' fill='%23c8922a' opacity='0.5' font-family='serif'%3E%E2%99%A6%3C/text%3E%3Ctext x='110' y='130' font-size='36' fill='%23c8922a' opacity='0.8' font-family='serif'%3E%E2%99%A3%3C/text%3E%3Ctext x='60' y='90' font-size='24' fill='%23c8922a' opacity='0.3' font-family='serif'%3EA%3C/text%3E%3Ctext x='150' y='180' font-size='20' fill='%23c8922a' opacity='0.3' font-family='serif'%3EK%3C/text%3E%3C/svg%3E");
+background-size:200px 200px;background-repeat:repeat}
+body.dark::after{opacity:0.07}
+.tab{position:relative;z-index:1}.topbar{position:sticky;top:0;z-index:50}.bn{z-index:100}
 /* Chat/Comments */
 .chat-wrap{margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
 .chat-inp{display:flex;gap:8px;align-items:center;margin-bottom:8px}
