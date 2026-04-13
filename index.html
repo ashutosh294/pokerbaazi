@@ -208,8 +208,8 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .dm-btn{background:none;border:1px solid var(--border2);border-radius:99px;color:var(--sub);font-size:14px;padding:4px 10px;cursor:pointer;transition:all 0.2s}
 .dm-btn:hover{border-color:var(--gold);color:var(--gold)}
 /* Poker card background */
-body::before{content:'♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10 ♠ ♥ ♦ ♣ A K Q J 10';position:fixed;top:0;left:0;width:100%;height:100%;font-size:22px;line-height:2.2;letter-spacing:6px;word-spacing:10px;opacity:0.035;pointer-events:none;z-index:0;overflow:hidden;color:var(--gold);word-break:break-all}
-body.dark::before{opacity:0.04}
+body::before{content:'ROYAL FLUSH  A♠ K♠ Q♠ J♠ 10♠     STRAIGHT FLUSH  9♥ 8♥ 7♥ 6♥ 5♥     FOUR OF A KIND  A♣ A♦ A♥ A♠     FULL HOUSE  K♠ K♥ K♦ J♣ J♥     FLUSH  A♦ J♦ 9♦ 5♦ 2♦     STRAIGHT  10♠ 9♥ 8♦ 7♣ 6♠     THREE OF A KIND  Q♠ Q♥ Q♦     TWO PAIR  J♠ J♥ 9♣ 9♦     ONE PAIR  A♠ A♥     HIGH CARD  A♠ K♦';position:fixed;top:0;left:0;width:100%;height:100%;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;line-height:3.2;letter-spacing:3px;word-spacing:6px;opacity:0.055;pointer-events:none;z-index:0;overflow:hidden;color:var(--gold);word-break:break-all;white-space:normal}
+body.dark::before{opacity:0.08}
 .tab{position:relative;z-index:1}
 /* Chat/Comments */
 .chat-wrap{margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
@@ -674,7 +674,7 @@ function renderEnts(){
   const el=document.getElementById('sents');if(!el)return;
   const rate=parseInt(document.getElementById('br').value)||100;
   if(!sess.a.length){el.innerHTML=`<div class="hint" style="padding:24px 0">Players select karo ↑</div>`;document.getElementById('ptval').textContent='₹0';document.getElementById('ptsub').textContent='';document.getElementById('wbox').style.display='none';return;}
-  el.innerHTML=sess.a.map(p=>{const b=sess.b[p]||0,r=sess.r[p]!==undefined?sess.r[p]:'',ep=esc(p);return`<div class="er"><div class="en">${ep}</div><div class="bc"><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,-1)">−</button><span class="bct" id="bc-${ep}">${b}</span><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,1)">+</button></div><input class="ri2" type="text" inputmode="decimal" id="res-${ep}" value="${r}" placeholder="±₹" oninput="onR('${ep}',this.value)"></div>`;}).join('');
+  el.innerHTML=sess.a.map(p=>{const b=sess.b[p]||0,r=sess.r[p]!==undefined?sess.r[p]:'',ep=esc(p);return`<div class="er"><div class="en">${ep}</div><div class="bc"><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,-1)">−</button><span class="bct" id="bc-${ep}">${b}</span><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,1)">+</button></div><input class="ri2" type="text" inputmode="decimal" id="res-${ep}" value="${r}" placeholder="±₹" oninput="onRq('${ep}',this.value)" onblur="renderEnts()"></div>`;}).join('');
   const tot=sess.a.reduce((s,p)=>s+(sess.b[p]||0),0);
   document.getElementById('ptval').textContent=`₹${fmt(tot*rate)}`;document.getElementById('ptsub').textContent=`${tot} buyings × ₹${rate}`;
   const af=sess.a.length>0&&sess.a.every(p=>sess.r[p]!==''&&sess.r[p]!==undefined);
@@ -683,6 +683,7 @@ function renderEnts(){
 }
 function chgB(n,d){sess.b[n]=Math.max(0,Math.min(100,(sess.b[n]||0)+d));const e=document.getElementById('bc-'+n);if(e)e.textContent=sess.b[n];renderEnts();}
 function onR(n,v){sess.r[n]=v===''?'':v;renderEnts();}
+function onRq(n,v){sess.r[n]=v===''?'':v;}
 async function doSave(){
   if(!canW()){toast('🔒 Ante up first — login karo!');return;}if(!sess.a.length){toast('⚠️ Koi player deal nahi kiya!');return;}
   const btn=document.getElementById('svbtn');btn.disabled=true;btn.textContent='Saving...';
