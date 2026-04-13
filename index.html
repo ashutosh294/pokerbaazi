@@ -16,6 +16,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f6f3;--surface:#fff;--border:#e8e5de;--border2:#d4cfc4;--text:#1a1814;--sub:#6b6560;--dim:#a09890;--gold:#c8922a;--gold-bg:#fdf6e8;--green:#1e8a5e;--green-bg:#edfaf4;--red:#c0392b;--red-bg:#fdf0ee;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);--shm:0 4px 16px rgba(0,0,0,0.10),0 1px 4px rgba(0,0,0,0.06)}
+body.dark{--bg:#0f1117;--surface:#1a1d27;--border:#2a2d3a;--border2:#3a3d4a;--text:#f0ede8;--sub:#9a9590;--dim:#5a5a6a;--gold:#e0a030;--gold-bg:#2a2010;--green:#22a870;--green-bg:#0a2a1a;--red:#e05040;--red-bg:#2a0f0f}
+body.dark .topbar{background:rgba(15,17,23,0.95)}
+body.dark .bn{background:rgba(15,17,23,0.97)}
+body.dark #loader{background:#0f1117}
+body.dark .ms{background:var(--surface)}
+body.dark .pk{background:var(--surface)}
+body.dark .finp:focus{background:var(--surface)}
+body.dark{--bg:#0f1117;--surface:#1a1d27;--border:#2a2d3a;--border2:#3a3d4a;--text:#f0ede8;--sub:#9a9590;--dim:#5a5a6a;--gold:#e0a030;--gold-bg:#2a2010;--green:#22a870;--green-bg:#0a2a1a;--red:#e05040;--red-bg:#2a0f0f}
+body.dark .topbar{background:rgba(15,17,23,0.95)}
+body.dark .bn{background:rgba(15,17,23,0.97)}
+body.dark #loader{background:#0f1117}
+body.dark .ms{background:var(--surface)}
+body.dark .pk{background:var(--surface)}
+body.dark .finp:focus{background:var(--surface)}
+body.dark .ri:focus{background:var(--surface)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overscroll-behavior:none}
 body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:14px;line-height:1.5;min-height:100dvh;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
@@ -188,12 +203,42 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .actd{color:var(--sub);font-size:11px;font-family:'JetBrains Mono',monospace}
 .actm{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:3px}
 @media(max-width:360px){.tam{font-size:14px}.pv{font-size:22px}.lnet{font-size:15px}}
+/* Dark mode toggle */
+.dm-btn{background:none;border:1px solid var(--border2);border-radius:99px;color:var(--sub);font-size:14px;padding:4px 10px;cursor:pointer;transition:all 0.2s}
+.dm-btn:hover{border-color:var(--gold);color:var(--gold)}
+/* Poker card background */
+body::before{content:'🂡 🂱 🃁 🃑 🂢 🂲 🃂 🃒 🂣 🂳 🃃 🃓 🂤 🂴 🃄 🃔 🂥 🂵 🃅 🃕 🂦 🂶 🃆 🃖 🂧 🂷 🃇 🃗 🂨 🂸 🃈 🃘 🂩 🂹 🃉 🃙 🂪 🂺 🃊 🃚 🂫 🂻 🃋 🃛 🂭 🂽 🃍 🃝 🂮 🂾 🃎 🃞 🂡';position:fixed;top:0;left:0;width:100%;height:100%;font-size:28px;line-height:1.8;letter-spacing:4px;word-spacing:8px;opacity:0.025;pointer-events:none;z-index:0;overflow:hidden;color:var(--gold)}
+body.dark::before{opacity:0.04}
+.tab{position:relative;z-index:1}
+/* Chat/Comments */
+.chat-wrap{margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+.chat-inp{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.chat-inp input{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:99px;color:var(--text);font-family:inherit;font-size:12px;padding:7px 14px;outline:none}
+.chat-inp input:focus{border-color:var(--gold)}
+.chat-inp button{background:var(--gold);border:none;border-radius:99px;color:#fff;font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;white-space:nowrap}
+.comment{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+.comment-name{font-size:11px;font-weight:600;color:var(--gold);flex-shrink:0}
+.comment-text{font-size:12px;color:var(--sub);flex:1}
+/* UPI Button */
+.upi-btn{display:flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid rgba(30,138,94,0.25);border-radius:var(--rs);color:var(--green);font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.upi-btn:active{transform:scale(0.96)}
+/* Share card */
+#share-canvas{display:none}
+.share-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(200,146,42,0.3);border-radius:var(--rs);color:var(--gold);font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;transition:all 0.15s}
+/* Stats new */
+.streak-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin:1px}
+.streak-dot.w{background:var(--green)}.streak-dot.l{background:var(--red)}.streak-dot.p{background:var(--dim)}
+/* Report card */
+.report-card{background:linear-gradient(135deg,var(--surface),var(--bg));border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.report-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.report-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.report-row:last-child{border-bottom:none}
 </style>
 </head>
 <body>
 <div id="loader"><div class="ld-icon">&#9824;</div><div class="ld-title">POKER 🂠</div><div class="ld-bar"><div class="ld-prog"></div></div></div>
 
-<div cl<div class="mo" id="lm">
+<div class="mo" id="lm">
   <div class="ms">
     <div class="ll"><div class="lli">&#9824;</div><div class="lln">POKER TRACKER 🂠</div></div>
     <div id="lstep1">
@@ -231,7 +276,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 
 <div id="ob">📵 Offline — cached cards dikhaye ja rahe hain</div>
 <div id="ub"><div><span id="un"></span><span id="urol" style="color:var(--sub);font-size:11px;margin-left:6px"></span></div><button class="lob" onclick="doLogout()">Logout</button></div>
-<div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div>
+<div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><button class="dm-btn" id="dmbtn" onclick="toggleDark()" title="Dark mode">🌙</button><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div>
 
 <div id="tab-board" class="tab active">
   <div class="sl">🏆 Chip Leaders</div>
@@ -262,11 +307,30 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
   <div class="sl">💰 Chip Settlement</div>
   <div class="sc"><button class="sb active" id="stl" onclick="setSSrc('last')">Last Hand</button><button class="sb" id="sta" onclick="setSSrc('all')">All Time</button></div>
   <div id="setbd"></div>
-  <div id="setcp" style="display:none;margin-top:12px"><button class="btn bo bf" onclick="copySettle()">📲 Copy for WhatsApp</button></div>
+  <div id="setcp" style="display:none;margin-top:12px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn bo" style="flex:1" onclick="copySettle()">📲 Copy for WhatsApp</button>
+      <button class="btn" style="flex:1;background:linear-gradient(135deg,#1a1a2e,#16213e);color:var(--gold);border:1px solid rgba(200,146,42,0.3)" onclick="shareCard()">🃏 Share Card</button>
+    </div>
+  </div>
 </div>
+<canvas id="share-canvas" width="600" height="400"></canvas>
 
 <div id="tab-stats" class="tab">
-  <div id="str"><div class="sl">🏅 Rankings</div><div id="strl"></div><hr class="dv"><div class="sl">📈 P&L Trend</div><div class="gpb" id="gpbtns"></div><div class="gw"><canvas id="pc" height="200"></canvas></div><div class="glr" id="gleg"></div></div>
+  <div id="str">
+    <div class="sl">🏅 Rankings</div><div id="strl"></div>
+    <hr class="dv">
+    <div class="sl">📈 P&L Trend</div>
+    <div class="gpb" id="gpbtns"></div>
+    <div class="gw"><canvas id="pc" height="200"></canvas></div>
+    <div class="glr" id="gleg"></div>
+    <hr class="dv">
+    <div class="sl">📅 Weekly Report</div>
+    <div id="weekly-report"></div>
+    <hr class="dv">
+    <div class="sl">🏆 Hall of Fame</div>
+    <div id="hof-stats"></div>
+  </div>
   <div id="stp" style="display:none"><button class="bkb" onclick="showRanking()">&#8592; Rankings</button><div id="stpb"></div></div>
 </div>
 
@@ -301,6 +365,16 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
   </div>
   <div class="sl">📋 Table Info</div>
   <div class="bi"><div id="mstats">&#8212;</div><div>Device: <strong id="mdev" style="font-size:10px;word-break:break-all">&#8212;</strong></div></div>
+  <div class="sl" style="margin-top:4px">🔔 Notifications</div>
+  <div style="margin-bottom:14px">
+    <button class="btn bo bf" id="notif-btn" onclick="subscribeNotif()">🔔 Enable Notifications</button>
+    <div id="notif-status" style="font-size:11px;color:var(--sub);text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace"></div>
+  </div>
+  <div class="sl" style="margin-top:4px">🔔 Notifications</div>
+  <div style="margin-bottom:14px">
+    <button class="btn bo bf" id="notif-btn" onclick="subscribeNotif()">🔔 Enable Notifications</button>
+    <div id="notif-status" style="font-size:11px;color:var(--sub);text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace"></div>
+  </div>
   <div class="sl" style="margin-top:4px">💾 Backup</div>
   <div style="display:flex;flex-direction:column;gap:8px">
     <button class="btn bo bf" onclick="expBk()">📤 Export Deck</button>
@@ -571,7 +645,7 @@ function sw(name){
   if(name==='session')renderSess();if(name==='history')renderHist();if(name==='settle')renderSettle();
   if(name==='stats')renderStats();if(name==='trash')renderTrash();if(name==='more')renderMore();if(name==='activity')renderActivity();
 }
-function renderAll(){renderBoard();renderSess();renderHist();renderSettle();renderStats();renderMore();updTrashBadge();}
+function renderAll(){renderBoard();renderSess();renderHist();renderSettle();renderStats();renderMore();updTrashBadge();renderWeeklyReport();renderHOF();}
 function onRateChange(){const r=parseInt(document.getElementById('br').value)||100;localStorage.setItem(RK,r);renderEnts();}
 
 function renderBoard(){
@@ -654,7 +728,7 @@ function renderSettle(){
   let h=`<div class="sps"><div class="sp"><div class="spv">₹${fmt(pot)}</div><div class="spk">Pot</div></div><div class="sp"><div class="spv">${ss.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">${tx.length}</div><div class="spk">Payments</div></div></div><div class="sl">Balances</div>`;
   Object.entries(bal).sort((a,b)=>b[1]-a[1]).forEach(([n,a])=>{const cls=a>0?'pos':a<0?'neg':'zero';h+=`<div class="br"><span class="bn2">${esc(n)}</span><span class="ba ${cls}">${a>0?'+':''}₹${fmt(Math.round(a))}</span></div>`;});
   if(!tx.length){h+=`<div class="as">✅ Sab settled!</div>`;cp.style.display='none';}
-  else{h+=`<div class="sl" style="margin-top:16px">Payments needed</div>`;tx.forEach((t,i)=>{h+=`<div class="tc" style="animation-delay:${i*60}ms"><span class="tf">${esc(t.from)}</span><span class="ta">→</span><span class="tt2">${esc(t.to)}</span><span class="tam">₹${fmt(t.amount)}</span></div>`;});cp.style.display='block';}
+  else{h+=`<div class="sl" style="margin-top:16px">Payments needed</div>`;tx.forEach((t,i)=>{h+=`<div class="tc" style="animation-delay:${i*60}ms"><span class="tf">${esc(t.from)}</span><span class="ta">→</span><span class="tt2">${esc(t.to)}</span><span class="tam">₹${fmt(t.amount)}</span><button class="upi-btn" onclick="openUPI('${esc(t.to)}',${t.amount})">💸 Pay</button></div>`;});cp.style.display='block';}
   el.innerHTML=h;
 }
 function copySettle(){
@@ -742,12 +816,8 @@ async function renderTrash(){
         const pot=(em[s.id]||[]).reduce((a,e)=>a+e.buyings,0)*s.buying_rate;
         const dd=new Date(s.deleted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
         const r2=(em[s.id]||[]).map(e=>{const cls=e.result>0?'pos':e.result<0?'neg':'zero';return`<div class="hr"><span class="hn">${esc(e.player_name)}</span><span class="hbuy">${e.buyings}×</span><span class="hnet ${cls}">${e.result>0?'+':''}₹${fmt(e.result)}</span></div>`;}).join('');
-        return`<div class="trca" style="animation-delay:${i*50}ms"><div class="trh"><div><div class="trt">${ds} · ₹${fmt(pot)} pot</div><div class="trm">🗑 ${dd} by ${esc(s.deleted_by||'Admin')}</div></div><div class="tra"><button class="tbtn res" data-id="${esc(s.id)}" onclick="resSess(this.dataset.id)">♻️</button><button class="tbtn pur" data-id="${esc(s.id)}" onclick="purSess(this.dataset.id)">💥</button></div></div><div class="hbd">${r2}</div></div>`;
-      }).join('');
-    }else{
-      const rows=await sb.get('poker_players?deleted_at=not.is.null&order=deleted_at.desc&select=id,name,phone,deleted_at,deleted_by');
-      if(!rows?.length){el.innerHTML=emp('✨','Koi player trash mein nahi');return;}
-      el.innerHTML=rows.map((p,i)=>{const dd=new Date(p.deleted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'});return`<div class="trp" style="animation-delay:${i*50}ms"><div><div class="tpn">🃏 ${esc(p.name)}</div><div class="trm">🗑 ${dd} by ${esc(p.deleted_by||'Admin')}</div></div><div class="tra"><button class="tbtn res" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="resPlay(this.dataset.id,this.dataset.n)">♻️ Restore</button><button class="tbtn pur" data-id="${esc(p.id)}" data-n="${esc(p.name)}" onclick="purPlay(this.dataset.id,this.dataset.n)">💥 Delete</button></div></div>`;}).join('');
+        return`<div class="trca" style="animation-delay:${i*50}ms"><div class="trh"><div><div class="trt">${ds} · ₹${fmt(pot)} pot</div><div class="trm">🗑 ${dd} by ${esc(s.deleted_by||'Admin')}</div></div><div class="tra"><button class="tbtn res" data-id="${esc(s.id)}" onclick="resSess(this.dataset.id)">♻️</button><button class="tbtn pur" data-id="${esc(s.id)}" onclick="purSess(this.dataset.id)">💥</button></div></div><div class="hbd">${r2}</div><div class=\"chat-wrap\"><div id=\"cm-${s.id}\">${renderComments(s.id)}</div>${canW()?"<div class=\"chat-inp\"><input id=\"ci-${s.id}\" type=\"text\" placeholder=\"Roast daalo 😄\" maxlength=\"100\"><button onclick=\"submitComment('"+s.id+"','ci-"+s.id+"','cm-"+s.id+"')\">Send</button></div>":""}</div></div>`;
+        }).join('');
     }
   }catch(e){el.innerHTML=`<div style="color:var(--red);font-size:12px;padding:12px">Error: ${e.message}</div>`;}
 }
@@ -805,6 +875,201 @@ function setupRT(){
   ws.onclose=()=>{setSync('');setTimeout(setupRT,3000);};ws.onerror=()=>ws.close();
 }
 
+
+// ── DARK MODE ────────────────────────────────────────────
+function toggleDark(){
+  const dark=document.body.classList.toggle('dark');
+  localStorage.setItem('pk_dark',dark?'1':'0');
+  document.getElementById('dmbtn').textContent=dark?'☀️':'🌙';
+  document.querySelector('meta[name="theme-color"]').content=dark?'#0f1117':'#ffffff';
+}
+function initDark(){
+  if(localStorage.getItem('pk_dark')==='1'){
+    document.body.classList.add('dark');
+    document.getElementById('dmbtn').textContent='☀️';
+    document.querySelector('meta[name="theme-color"]').content='#0f1117';
+  }
+}
+
+// ── PUSH NOTIFICATIONS ───────────────────────────────────
+async function subscribeNotif(){
+  const btn=document.getElementById('notif-btn'),st=document.getElementById('notif-status');
+  if(!('Notification' in window)){st.textContent='❌ Browser support nahi hai';return;}
+  if(Notification.permission==='granted'){st.textContent='✅ Notifications already enabled hain!';return;}
+  const perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    btn.textContent='✅ Notifications On';btn.disabled=true;
+    st.textContent='✅ Aapko session save hone par notify karenge!';
+    localStorage.setItem('pk_notif','1');
+  } else {
+    st.textContent='❌ Permission nahi mili. Browser settings se enable karo.';
+  }
+}
+function checkNotifStatus(){
+  const btn=document.getElementById('notif-btn');if(!btn)return;
+  if(Notification.permission==='granted'){
+    btn.textContent='✅ Notifications On';btn.disabled=true;
+    document.getElementById('notif-status').textContent='✅ Notifications enabled hain!';
+  }
+}
+function sendNotif(title,body){
+  if(Notification.permission==='granted'){
+    try{new Notification(title,{body,icon:'/favicon.svg',badge:'/favicon.svg'});}catch{}
+  }
+}
+
+// ── SHARE CARD ────────────────────────────────────────────
+function shareCard(){
+  const canvas=document.getElementById('share-canvas');
+  if(!canvas)return;
+  canvas.style.display='block';
+  const ctx=canvas.getContext('2d');
+  const W=600,H=400;
+  // Background
+  const grad=ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0,'#0f1117');grad.addColorStop(1,'#1a1d27');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  // Gold border
+  ctx.strokeStyle='#c8922a';ctx.lineWidth=3;ctx.strokeRect(8,8,W-16,H-16);
+  // Card symbols bg
+  ctx.fillStyle='rgba(200,146,42,0.06)';ctx.font='32px serif';
+  const suits=['♠','♥','♦','♣'];
+  for(let i=0;i<8;i++)for(let j=0;j<5;j++)ctx.fillText(suits[(i+j)%4],i*78,j*90+40);
+  // Title
+  ctx.fillStyle='#c8922a';ctx.font='bold 28px Sora,sans-serif';ctx.textAlign='center';
+  ctx.fillText('♠ POKER TRACKER',W/2,60);
+  // Date
+  ctx.fillStyle='#9a9590';ctx.font='14px monospace';
+  ctx.fillText(new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}),W/2,90);
+  // Divider
+  ctx.strokeStyle='rgba(200,146,42,0.4)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(40,105);ctx.lineTo(W-40,105);ctx.stroke();
+  // Get last session data
+  const lastSess=sessions[0];
+  if(lastSess&&lastSess.entries.length){
+    const rate=lastSess.buying_rate;
+    const sorted=[...lastSess.entries].sort((a,b)=>Number(b.result)-Number(a.result));
+    const pot=lastSess.entries.reduce((s,e)=>s+e.buyings,0)*rate;
+    ctx.fillStyle='#9a9590';ctx.font='12px monospace';ctx.textAlign='left';
+    ctx.fillText(`POT: ₹${pot.toLocaleString('en-IN')} · ${lastSess.entries.length} PLAYERS`,44,130);
+    sorted.forEach((e,i)=>{
+      const y=160+i*46;if(y>360)return;
+      const net=Number(e.result);
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'  ';
+      ctx.fillStyle=net>0?'#22a870':net<0?'#e05040':'#9a9590';
+      ctx.font='bold 18px Sora,sans-serif';ctx.textAlign='left';
+      ctx.fillText(`${medal} ${e.player_name}`,44,y);
+      ctx.font='bold 18px monospace';ctx.textAlign='right';
+      ctx.fillText(`${net>0?'+':''}₹${Math.abs(net).toLocaleString('en-IN')}`,W-44,y);
+    });
+  } else {
+    ctx.fillStyle='#9a9590';ctx.font='16px Sora,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Koi session data nahi',W/2,200);
+  }
+  // Footer
+  ctx.fillStyle='rgba(200,146,42,0.5)';ctx.font='11px monospace';ctx.textAlign='center';
+  ctx.fillText('pokerbaazi-all-in.vercel.app',W/2,H-20);
+  // Download
+  const a=document.createElement('a');
+  a.download=`poker-result-${new Date().toISOString().slice(0,10)}.png`;
+  a.href=canvas.toDataURL('image/png');
+  a.click();
+  canvas.style.display='none';
+  toast('🃏 Share card ready! 📲');
+}
+
+// ── UPI PAYMENT ───────────────────────────────────────────
+function openUPI(name,amount){
+  // UPI deep link — works with GPay, PhonePe, Paytm
+  const msg=encodeURIComponent(`Poker settlement — ${name} ka ${amount}`);
+  const upiUrl=`upi://pay?pa=&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${msg}`;
+  window.open(upiUrl,'_blank');
+  toast(`💸 UPI app khul raha hai...`);
+}
+
+// ── CHAT / COMMENTS ──────────────────────────────────────
+const COMMENTS_KEY='pk_comments';
+function getComments(sessionId){
+  try{const c=JSON.parse(localStorage.getItem(COMMENTS_KEY)||'{}');return c[sessionId]||[];}catch{return[];}
+}
+function addComment(sessionId,text){
+  if(!text.trim())return;
+  try{
+    const c=JSON.parse(localStorage.getItem(COMMENTS_KEY)||'{}');
+    if(!c[sessionId])c[sessionId]=[];
+    c[sessionId].push({name:cu?.name||'Guest',text:text.trim(),at:Date.now()});
+    localStorage.setItem(COMMENTS_KEY,JSON.stringify(c));
+  }catch{}
+}
+function renderComments(sessionId){
+  const comments=getComments(sessionId);
+  if(!comments.length)return '';
+  return comments.map(c=>`<div class="comment"><span class="comment-name">${esc(c.name)}</span><span class="comment-text">${esc(c.text)}</span></div>`).join('');
+}
+function submitComment(sessionId,inputId,containerId){
+  const inp=document.getElementById(inputId);if(!inp)return;
+  const text=inp.value.trim();if(!text)return;
+  addComment(sessionId,text);inp.value='';
+  const cont=document.getElementById(containerId);
+  if(cont)cont.innerHTML=renderComments(sessionId);
+}
+
+// ── WEEKLY/MONTHLY REPORT ────────────────────────────────
+function renderWeeklyReport(){
+  const el=document.getElementById('weekly-report');if(!el)return;
+  const now=Date.now(),week=7*24*60*60*1000;
+  const weekSess=sessions.filter(s=>now-new Date(s.played_at).getTime()<week);
+  const monthSess=sessions.filter(s=>now-new Date(s.played_at).getTime()<30*24*60*60*1000);
+  if(!weekSess.length&&!monthSess.length){el.innerHTML=`<div class="hint">Koi recent sessions nahi</div>`;return;}
+  // Weekly stats
+  const wPot=weekSess.reduce((s,ss)=>s+ss.entries.reduce((a,e)=>a+e.buyings,0)*ss.buying_rate,0);
+  const allEntries=weekSess.flatMap(s=>s.entries);
+  const playerWeek={};
+  allEntries.forEach(e=>{if(!playerWeek[e.player_name])playerWeek[e.player_name]=0;playerWeek[e.player_name]+=Number(e.result);});
+  const sorted=Object.entries(playerWeek).sort((a,b)=>b[1]-a[1]);
+  const winner=sorted[0],loser=sorted[sorted.length-1];
+  el.innerHTML=`<div class="report-card">
+    <div class="report-title">📅 Is Hafte (${weekSess.length} hands)</div>
+    <div class="report-row"><span>Total Pot</span><span style="font-weight:700;font-family:'JetBrains Mono',monospace">₹${wPot.toLocaleString('en-IN')}</span></div>
+    ${winner?`<div class="report-row"><span>🏆 Top Winner</span><span style="color:var(--green);font-weight:600">${esc(winner[0])} +₹${Math.abs(winner[1]).toLocaleString('en-IN')}</span></div>`:''}
+    ${loser&&loser[0]!==winner?.[0]?`<div class="report-row"><span>📉 Biggest Loss</span><span style="color:var(--red);font-weight:600">${esc(loser[0])} -₹${Math.abs(loser[1]).toLocaleString('en-IN')}</span></div>`:''}
+    <div class="report-row"><span>Sessions</span><span>${weekSess.length}</span></div>
+  </div>`;
+}
+
+// ── HALL OF FAME (best/worst stats) ─────────────────────
+function renderHOF(){
+  const el=document.getElementById('hof-stats');if(!el)return;
+  if(!sessions.length){el.innerHTML='';return;}
+  // Win rate per player
+  const pData={};
+  sessions.forEach(s=>{
+    s.entries.forEach(e=>{
+      if(!pData[e.player_name])pData[e.player_name]={wins:0,total:0,best:0,worst:0,net:0};
+      const d=pData[e.player_name];
+      d.total++;
+      if(Number(e.result)>0)d.wins++;
+      d.net+=Number(e.result);
+      if(Number(e.result)>d.best)d.best=Number(e.result);
+      if(Number(e.result)<d.worst)d.worst=Number(e.result);
+    });
+  });
+  const rows=Object.entries(pData).filter(([,d])=>d.total>=2).sort((a,b)=>b[1].net-a[1].net);
+  if(!rows.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="report-card">
+    <div class="report-title">📊 Player Records</div>
+    ${rows.map(([name,d])=>{
+      const wr=Math.round(d.wins/d.total*100);
+      return`<div class="report-row">
+        <span style="font-weight:600">${esc(name)}</span>
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;text-align:right">
+          Win ${wr}% · Best +₹${d.best.toLocaleString('en-IN')} · Worst -₹${Math.abs(d.worst).toLocaleString('en-IN')}
+        </span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&cu){
     const la=parseInt(localStorage.getItem(LAST_ACTIVE_KEY)||'0');
@@ -812,7 +1077,7 @@ document.addEventListener('visibilitychange',()=>{
   }
 });
 async function init(){
-  buildPP();
+  buildPP();initDark();checkNotifStatus();
   const sr=localStorage.getItem(RK);if(sr)document.getElementById('br').value=sr;
   let ok=false;
   try{await loadAll();ok=true;}catch(e){console.warn('Supabase failed',e);}
