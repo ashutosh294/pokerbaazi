@@ -299,6 +299,19 @@ body.dark::after{opacity:0.07}
 .h2h-meta{font-size:10px;color:var(--dim);text-align:center;font-family:'JetBrains Mono',monospace}
 .h2h-btn{background:var(--bg);border:1.5px solid var(--border2);border-radius:99px;color:var(--sub);cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;padding:5px 13px;transition:all 0.15s}
 .h2h-btn.sel{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);font-weight:600}
+/* Custom confirm modal */
+#conf-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
+#conf-modal.show{display:flex}
+.conf-box{background:var(--surface);border-radius:20px;padding:24px 20px;width:100%;max-width:340px;box-shadow:var(--shm);animation:su 0.25s cubic-bezier(0.34,1.56,0.64,1)}
+.conf-icon{font-size:36px;text-align:center;margin-bottom:10px}
+.conf-title{font-size:16px;font-weight:700;text-align:center;margin-bottom:6px;color:var(--text)}
+.conf-msg{font-size:13px;color:var(--sub);text-align:center;margin-bottom:20px;line-height:1.5}
+.conf-btns{display:flex;gap:10px}
+.conf-ok{flex:1;background:var(--red-bg);border:1px solid rgba(192,57,43,0.2);border-radius:var(--r);color:var(--red);font-family:inherit;font-size:14px;font-weight:700;padding:12px;cursor:pointer;transition:all 0.15s}
+.conf-ok.safe{background:var(--gold-bg);border-color:rgba(200,146,42,0.2);color:var(--gold)}
+.conf-ok.green{background:var(--green-bg);border-color:rgba(30,138,94,0.2);color:var(--green)}
+.conf-cancel{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);color:var(--sub);font-family:inherit;font-size:14px;font-weight:600;padding:12px;cursor:pointer;transition:all 0.15s}
+.conf-ok:active,.conf-cancel:active{transform:scale(0.97)}
 </style>
 </head>
 <body>
@@ -366,6 +379,9 @@ body.dark::after{opacity:0.07}
 
 <div id="tab-history" class="tab">
   <div class="sl">📜 Hand History</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
+    <input type="text" id="hist-search" class="finp" placeholder="🔍 Player ya date..." style="flex:1;padding:8px 12px;font-size:13px" oninput="renderHist()">
+  </div>
   <div id="histl"></div>
 </div>
 
@@ -461,6 +477,17 @@ body.dark::after{opacity:0.07}
   <div id="actl"></div>
 </div>
 
+<div id="conf-modal">
+  <div class="conf-box">
+    <div class="conf-icon" id="conf-icon"></div>
+    <div class="conf-title" id="conf-title"></div>
+    <div class="conf-msg" id="conf-msg"></div>
+    <div class="conf-btns">
+      <button class="conf-cancel" id="conf-cancel">Cancel</button>
+      <button class="conf-ok" id="conf-ok">Confirm</button>
+    </div>
+  </div>
+</div>
 <nav class="bn">
   <button class="nb active" onclick="sw('board')"    id="nav-board">   <div class="ni">&#127942;</div><div class="nl">Board</div></button>
   <button class="nb"        onclick="sw('session')"  id="nav-session">  <div class="ni">&#127183;</div><div class="nl">Deal</div></button>
@@ -487,7 +514,14 @@ let players=[],sessions=[],pStats=[],cu=null,isAdm=false,isMem=false;
 let sess={a:[],b:{},r:{}},ssrc='last',ttab='sessions',ga=[],sv='ranking',sn=null,pb='',lst=0;
 
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-function fmt(n){return Math.abs(Number(n)).toLocaleString('en-IN');}
+function fmt(n,short=false){
+  const v=Math.abs(Number(n));
+  if(short){
+    if(v>=100000)return(v/100000).toFixed(1).replace(/\.0$/,'')+'L';
+    if(v>=1000)return(v/1000).toFixed(1).replace(/\.0$/,'')+'K';
+  }
+  return v.toLocaleString('en-IN');
+}
 function emp(i,m){return`<div class="es"><div class="ei">${i}</div><p>${m}</p></div>`;}
 function tago(d){const df=Date.now()-new Date(d).getTime(),m=Math.floor(df/60000),h=Math.floor(df/3600000),dy=Math.floor(df/86400000);if(m<1)return'abhi';if(m<60)return`${m}m ago`;if(h<24)return`${h}h ago`;if(dy<7)return`${dy}d ago`;return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
 function toast(msg,dur=2600){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);}
@@ -550,7 +584,7 @@ async function doLogin(){
     if(!res?.success){
       if(res?.error==='not_found')throw new Error('Yeh number registered nahi. Admin se contact karo.');
       if(res?.error==='already_logged_in'){
-        const ok=confirm('⚠️ Yeh account kisi aur device pe login hai.\n\nFir bhi is device pe login karna chahte ho?');
+        const ok=await showConfirm({icon:'⚠️',title:'Already logged in',msg:'Yeh account kisi aur device pe login hai. Fir bhi login karna chahte ho?',okText:'Force Login',okClass:'safe'});
         if(!ok){er.textContent='Login cancel kiya.';return;}
         const fr=await sb.rpc('player_login_check',{p_phone:ph,p_device_id:getDev(),p_force:true});
         if(!fr?.success)throw new Error('Login fail hua.');
@@ -684,7 +718,7 @@ async function chkPRPin(){
 }
 function viewOnly(){document.getElementById('lm').classList.remove('show');renderAll();}
 async function doLogout(){
-  if(!confirm('🚪 Walk away from the table?'))return;
+  if(!await showConfirm({icon:'🚪',title:'Walk away?',msg:'Table chhod ke jaana chahte ho?',okText:'Leave',okClass:''}))return;
   try{if(cu)await sb.rpc('player_logout',{p_phone:cu.phone,p_device_id:getDev()});}catch{}
   clearAC();updateUB();renderAll();document.getElementById('lm').classList.add('show');toast('👋 See ya at the tables!');
 }
@@ -803,12 +837,27 @@ async function doSave(){
     await loadAll();sess={a:[],b:{},r:{}};renderAll();toast('🎉 Hand shipped! GG!');
   }catch(e){toast('❌ '+e.message);}finally{btn.disabled=false;btn.textContent='💾 Save Session';}
 }
-function doReset(){if(!confirm('🔄 Muck this hand?'))return;sess={a:[],b:{},r:{}};renderSess();toast('🔄 Hand mucked!');}
+async function doReset(){if(!await showConfirm({icon:'🔄',title:'Muck this hand?',msg:'Current session ka data clear ho jaayega.',okText:'Muck it',okClass:'safe'}))return;sess={a:[],b:{},r:{}};renderSess();toast('🔄 Hand mucked!');}
 
+let _histPage=0;const HIST_PAGE_SIZE=15;
 function renderHist(){
   const el=document.getElementById('histl');if(!el)return;
   if(!sessions.length){el.innerHTML=emp('📜','Koi session nahi abhi');return;}
-  el.innerHTML=sessions.map((s,i)=>{
+  // Filter
+  const q=(document.getElementById('hist-search')?.value||'').toLowerCase().trim();
+  const filtered=q?sessions.filter(s=>{
+    const players=s.entries.map(e=>e.player_name.toLowerCase()).join(' ');
+    const date=new Date(s.played_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}).toLowerCase();
+    return players.includes(q)||date.includes(q);
+  }):sessions;
+  if(!filtered.length){el.innerHTML=emp('🔍','Koi session nahi mila');return;}
+  // Pagination
+  const page=_histPage;
+  const start=page*HIST_PAGE_SIZE;
+  const paginated=filtered.slice(start,start+HIST_PAGE_SIZE);
+  const hasMore=filtered.length>start+HIST_PAGE_SIZE;
+  const baseIdx=start;
+  el.innerHTML=paginated.map((s,i)=>{const idx=baseIdx+i;
     const d=new Date(s.played_at),ds=d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),ts=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
     const pot=s.entries.reduce((a,e)=>a+e.buyings,0)*s.buying_rate;
     const rows=s.entries.map(e=>{const cls=e.result>0?'pos':e.result<0?'neg':'zero';return`<div class="hr"><span class="hn">${esc(e.player_name)}</span><span class="hbuy">${e.buyings}×</span><span class="hnet ${cls}">${e.result>0?'+':''}₹${fmt(e.result)}</span></div>`;}).join('');
@@ -817,7 +866,7 @@ function renderHist(){
   }).join('');
 }
 async function trSess(id){
-  if(!canD()){toast('🔒 House rules — sirf admin!');return;}if(!confirm('Session trash mein bhejo?'))return;
+  if(!canD()){toast('🔒 House rules — sirf admin!');return;}if(!await showConfirm({icon:'🗑',title:'Session trash karo?',msg:'Session muck pile mein jaayega, restore kar sakte ho baad mein.',okText:'Trash it'}))return;
   try{await sb.patch(`poker_sessions?id=eq.${id}`,{deleted_at:new Date().toISOString(),deleted_by:cu?.name||'Admin'});await logA('session_deleted','Session trashed');await loadAll();renderHist();renderBoard();renderSettle();renderStats();updTrashBadge();toast('Session trash mein gaya 🗑');}catch(e){toast('❌ '+e.message);}
 }
 
@@ -947,10 +996,10 @@ async function updTrashBadge(){
   if(!isAdm)return;
   try{const[s,p]=await Promise.all([sb.get('poker_sessions?deleted_at=not.is.null&select=id'),sb.get('poker_players?deleted_at=not.is.null&select=id')]);const total=(s?.length||0)+(p?.length||0);const nb=document.getElementById('nav-trash');if(!nb)return;let b=nb.querySelector('.nbadge');if(total>0){if(!b){b=document.createElement('span');b.className='nbadge';nb.appendChild(b);}b.textContent=total;}else b?.remove();}catch{}
 }
-async function resSess(id){if(!confirm('♻️ Wapas table pe bulao?'))return;try{await sb.patch(`poker_sessions?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('session_restored','Session restored');await loadAll();renderTrash();renderHist();renderBoard();updTrashBadge();toast('♻️ Back in the game!');}catch(e){toast('❌ '+e.message);}}
-async function purSess(id){if(!confirm('💥 Permanently muck karo? No re-buy!'))return;try{await sb.del(`poker_entries?session_id=eq.${id}`);await sb.del(`poker_sessions?id=eq.${id}`);await logA('session_purged','Permanently deleted');renderTrash();updTrashBadge();toast('💥 Permanently mucked!');}catch(e){toast('❌ '+e.message);}}
-async function resPlay(id,name){if(!confirm(`♻️ "${name}" ko wapas game mein laao?`))return;try{await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('player_restored',name);await loadAll();renderTrash();renderMore();updTrashBadge();toast('♻️ Back in the game!');}catch(e){toast('❌ '+e.message);}}
-async function purPlay(id,name){if(!confirm(`💥 "${name}" permanently fold? No re-buy!`))return;try{await sb.del(`poker_players?id=eq.${id}`);await logA('player_purged',name);renderTrash();updTrashBadge();toast('💥 Permanently mucked!');}catch(e){toast('❌ '+e.message);}}
+async function resSess(id){if(!await showConfirm({icon:'♻️',title:'Restore karo?',msg:'Session wapas active ho jaayega.',okText:'Restore',okClass:'green'}))return;try{await sb.patch(`poker_sessions?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('session_restored','Session restored');await loadAll();renderTrash();renderHist();renderBoard();updTrashBadge();toast('♻️ Back in the game!');}catch(e){toast('❌ '+e.message);}}
+async function purSess(id){if(!await showConfirm({icon:'💥',title:'Permanently delete?',msg:'Yeh session forever gone ho jaayega. No re-buy!',okText:'Delete Forever'}))return;try{await sb.del(`poker_entries?session_id=eq.${id}`);await sb.del(`poker_sessions?id=eq.${id}`);await logA('session_purged','Permanently deleted');renderTrash();updTrashBadge();toast('💥 Permanently mucked!');}catch(e){toast('❌ '+e.message);}}
+async function resPlay(id,name){if(!await showConfirm({icon:"♻️",title:"Restore player?",msg:`"${name}" ko wapas active karo?`,okText:"Restore",okClass:"green"}))return;try{await sb.patch(`poker_players?id=eq.${id}`,{deleted_at:null,deleted_by:null});await logA('player_restored',name);await loadAll();renderTrash();renderMore();updTrashBadge();toast('♻️ Back in the game!');}catch(e){toast('❌ '+e.message);}}
+async function purPlay(id,name){if(!await showConfirm({icon:"💥",title:"Permanently delete?",msg:`"${name}" forever gone. No re-buy!`,okText:"Delete Forever"}))return;try{await sb.del(`poker_players?id=eq.${id}`);await logA('player_purged',name);renderTrash();updTrashBadge();toast('💥 Permanently mucked!');}catch(e){toast('❌ '+e.message);}}
 
 function renderMore(){
   renderPList();document.getElementById('mstats').textContent=`${players.length} players at the table · ${sessions.length} hands played`;document.getElementById('mdev').textContent=getDev();
@@ -972,7 +1021,7 @@ async function doAddP(){
 }
 async function actP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:true});await logA('player_activated',name);await loadAll();renderPList();renderSess();toast(`✅ ${esc(name)} is back at the table!`);}catch(e){toast('❌ '+e.message);}}
 async function deactP(id,name){try{await sb.rpc('toggle_player_active',{p_player_id:id,p_is_active:false});await logA('player_deactivated',name);await loadAll();renderPList();renderSess();toast(`💤 ${esc(name)} sat out!`);}catch(e){toast('❌ '+e.message);}}
-async function trPlay(id,name){if(!confirm(`"${name}" ko muck pile mein bhejo?`))return;
+async function trPlay(id,name){if(!await showConfirm({icon:"🗑",title:"Player trash karo?",msg:`"${name}" ko muck pile mein bhejo?`,okText:"Trash it"}))return;
   // Optimistic UI — turant list se hatao
   players=players.filter(p=>p.id!==id);
   renderPList();
@@ -987,9 +1036,9 @@ async function trPlay(id,name){if(!confirm(`"${name}" ko muck pile mein bhejo?`)
 }
 
 function expBk(){const b=new Blob([JSON.stringify({players,sessions},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`poker-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('💾 Deck exported!');}
-function impBk(input){const f=input.files[0];if(!f)return;if(!confirm('⚠️ Import karo? Current deck overwrite hoga'))return;const r=new FileReader();r.onload=e=>{try{JSON.parse(e.target.result);toast('✅ Back in action!');}catch{toast('❌ Invalid file');}input.value='';};r.readAsText(f);}
+async function impBk(input){const f=input.files[0];if(!f)return;if(!await showConfirm({icon:'📥',title:'Import karo?',msg:'Current data overwrite ho jaayega. Pakka?',okText:'Import',okClass:'safe'}))return;const r=new FileReader();r.onload=e=>{try{JSON.parse(e.target.result);toast('✅ Back in action!');}catch{toast('❌ Invalid file');}input.value='';};r.readAsText(f);}
 async function doRstAll(){
-  if(!isAdm)return;if(!confirm('⚠️ FULL WIPE — Table reset hoga! All-in confirm?'))return;if(!confirm('Last chance — No re-buy possible!'))return;
+  if(!isAdm)return;if(!await showConfirm({icon:'💥',title:'FULL WIPE!',msg:'SAARA DATA DELETE HOGA! Yeh action undo nahi ho sakta!',okText:'All-In — Delete All'}))return;
   try{await sb.del('poker_entries?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_sessions?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_players?id=neq.00000000-0000-0000-0000-000000000000');await logA('data_reset','All data wiped');localStorage.removeItem(CK);await loadAll();renderAll();updTrashBadge();toast('💥 Table wiped clean!');}catch(e){toast('❌ '+e.message);}
 }
 
@@ -1322,6 +1371,28 @@ async function checkPendingSync() {
     }
   };
   navigator.serviceWorker.controller.postMessage({ type: 'GET_PENDING' }, [ch.port2]);
+}
+
+// ── CUSTOM CONFIRM MODAL ────────────────────────────────
+function showConfirm({icon='⚠️', title='Confirm karo', msg='', okText='Confirm', okClass='', cancelText='Cancel'}={}) {
+  return new Promise(res => {
+    document.getElementById('conf-icon').textContent = icon;
+    document.getElementById('conf-title').textContent = title;
+    document.getElementById('conf-msg').textContent = msg;
+    const okBtn = document.getElementById('conf-ok');
+    const cancelBtn = document.getElementById('conf-cancel');
+    okBtn.textContent = okText;
+    okBtn.className = 'conf-ok' + (okClass ? ' ' + okClass : '');
+    cancelBtn.textContent = cancelText;
+    document.getElementById('conf-modal').classList.add('show');
+    const close = val => {
+      document.getElementById('conf-modal').classList.remove('show');
+      okBtn.onclick = null; cancelBtn.onclick = null;
+      res(val);
+    };
+    okBtn.onclick = () => close(true);
+    cancelBtn.onclick = () => close(false);
+  });
 }
 
 document.addEventListener('visibilitychange',()=>{
