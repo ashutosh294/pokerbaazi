@@ -1036,7 +1036,55 @@ async function trPlay(id,name){if(!await showConfirm({icon:"🗑",title:"Player 
 }
 
 function expBk(){const b=new Blob([JSON.stringify({players,sessions},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`poker-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();toast('💾 Deck exported!');}
-async function impBk(input){const f=input.files[0];if(!f)return;if(!await showConfirm({icon:'📥',title:'Import karo?',msg:'Current data overwrite ho jaayega. Pakka?',okText:'Import',okClass:'safe'}))return;const r=new FileReader();r.onload=e=>{try{JSON.parse(e.target.result);toast('✅ Back in action!');}catch{toast('❌ Invalid file');}input.value='';};r.readAsText(f);}
+async function impBk(input){
+  const f=input.files[0];if(!f)return;
+  if(!await showConfirm({icon:'📥',title:'Import karo?',msg:'Current data overwrite ho jaayega. Pakka?',okText:'Import',okClass:'safe'}))return;
+  const r=new FileReader();
+  r.onload=async e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.players||!data.sessions){toast('❌ Invalid backup file');return;}
+      toast('⏳ Importing...',8000);
+      // Players import
+      for(const p of data.players){
+        try{
+          await sb.post('poker_players',{
+            id:p.id,name:p.name,phone:p.phone,
+            is_admin:p.is_admin||false,
+            is_active:p.is_active!==false,
+            created_at:p.created_at||new Date().toISOString()
+          });
+        }catch{}// Skip if already exists
+      }
+      // Sessions + entries import
+      for(const s of data.sessions){
+        try{
+          await sb.post('poker_sessions',{
+            id:s.id,played_at:s.played_at,
+            buying_rate:s.buying_rate,
+            saved_by:s.saved_by||'Import'
+          });
+          if(s.entries?.length){
+            for(const en of s.entries){
+              try{
+                await sb.post('poker_entries',{
+                  session_id:s.id,
+                  player_name:en.player_name,
+                  buyings:en.buyings,
+                  result:en.result
+                });
+              }catch{}
+            }
+          }
+        }catch{}
+      }
+      await loadAll();renderAll();
+      toast(`✅ Imported! ${data.players.length} players · ${data.sessions.length} sessions`);
+    }catch(err){toast('❌ Import failed: '+err.message);}
+    input.value='';
+  };
+  r.readAsText(f);
+}
 async function doRstAll(){
   if(!isAdm)return;if(!await showConfirm({icon:'💥',title:'FULL WIPE!',msg:'SAARA DATA DELETE HOGA! Yeh action undo nahi ho sakta!',okText:'All-In — Delete All'}))return;
   try{await sb.del('poker_entries?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_sessions?id=neq.00000000-0000-0000-0000-000000000000');await sb.del('poker_players?id=neq.00000000-0000-0000-0000-000000000000');await logA('data_reset','All data wiped');localStorage.removeItem(CK);await loadAll();renderAll();updTrashBadge();toast('💥 Table wiped clean!');}catch(e){toast('❌ '+e.message);}
