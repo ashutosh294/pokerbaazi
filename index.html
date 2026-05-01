@@ -131,9 +131,11 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 .as{text-align:center;padding:24px;color:var(--green);font-weight:600}
 .tc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;box-shadow:var(--sh);animation:fu 0.3s ease both;position:relative;overflow:hidden}
 .tc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red)}
+.tc.paid{background:rgba(30,138,94,.08);border-color:rgba(30,138,94,.28);opacity:.78}.tc.paid::before{background:var(--green)}
 .tf{font-size:13px;font-weight:600;color:var(--red);flex:1;text-align:right}
 .ta{font-size:11px;color:var(--dim);flex-shrink:0}.tt2{font-size:13px;font-weight:600;color:var(--green);flex:1}
 .tam{font-size:17px;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;min-width:64px;text-align:right}
+.paid-btn{border:1px solid var(--border2);background:var(--bg);color:var(--sub);border-radius:var(--rs);padding:7px 10px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s}.paid-btn.on{background:var(--green);border-color:var(--green);color:#fff}.paid-btn:active{transform:scale(.97)}.clear-paid{margin-top:8px;width:100%}
 .rc{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);margin-bottom:8px;box-shadow:var(--sh);cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;animation:fu 0.3s ease both}
 .rc:active{transform:scale(0.98)}
 .rc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
@@ -308,7 +310,7 @@ body.dark::after{opacity:0.07}
  .ptl,.gpb,.ar{gap:8px}.ptog,.gpbt,.h2h-btn{min-height:36px;padding:8px 14px}.bb{min-width:36px;min-height:32px}.btn{min-height:44px}
  #tab-session .sbs{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:40;background:linear-gradient(180deg,transparent,var(--bg) 18%);padding-top:18px;margin:0 -4px}
  #tab-session .sbs .btn{flex:1}.pb{position:sticky;bottom:calc(126px + env(safe-area-inset-bottom,0px));z-index:35;box-shadow:var(--shm)}
- .er{grid-template-columns:minmax(0,1fr) auto 86px}.ri2{width:86px}.tc{display:grid;grid-template-columns:1fr auto 1fr;gap:6px}.tam,.upi-btn{grid-column:1/-1;justify-self:stretch;text-align:center;justify-content:center}.tf{text-align:left}
+ .er{grid-template-columns:minmax(0,1fr) auto 86px}.ri2{width:86px}.tc{display:grid;grid-template-columns:1fr auto 1fr;gap:6px}.tam,.upi-btn,.paid-btn{grid-column:1/-1;justify-self:stretch;text-align:center;justify-content:center}.tf{text-align:left}
 }
 @media (min-width:681px){
  body{padding-bottom:0;background:linear-gradient(135deg,var(--bg) 0%,color-mix(in srgb,var(--bg),var(--surface) 50%) 100%)}
@@ -737,23 +739,37 @@ function minTx(bal){
  pos.sort((a,b)=>b.amt-a.amt);neg.sort((a,b)=>b.amt-a.amt);
  const tx=[];let i=0,j=0;while(i<neg.length&&j<pos.length){const d=neg[i],c=pos[j],a=Math.min(d.amt,c.amt);if(a>0)tx.push({from:d.name,to:c.name,amount:a});d.amt-=a;c.amt-=a;if(d.amt===0)i++;if(c.amt===0)j++;}return tx;
 }
+const SETTLE_PAID_KEY='pk_settle_paid_v1';
+function jsq(v){return String(v??'').split('\\').join('\\\\').split("'").join("\\'").replace(/[\r\n]+/g,' ');}
+function paidStore(){try{return JSON.parse(localStorage.getItem(SETTLE_PAID_KEY)||'{}')||{};}catch(e){return {};}}
+function savePaidStore(m){localStorage.setItem(SETTLE_PAID_KEY,JSON.stringify(m));}
+function settleScope(ss){return ssrc==='last'?`last:${ss[0]?.id||'none'}`:`all:${sessions[0]?.id||'none'}:${sessions.length}`;}
+function paidKey(scope,t){return `${scope}|${t.from}|${t.to}|${Math.round(t.amount)}`;}
+function isPaidTx(scope,t){return !!paidStore()[paidKey(scope,t)];}
+function togglePaid(scope,from,to,amount){const m=paidStore(),k=paidKey(scope,{from,to,amount});m[k]=!m[k];if(!m[k])delete m[k];savePaidStore(m);renderSettle();toast(m[k]?'Marked paid':'Marked pending');}
+function clearPaidForScope(scope){const m=paidStore(),pre=`${scope}|`;Object.keys(m).forEach(k=>{if(k.startsWith(pre))delete m[k];});savePaidStore(m);renderSettle();toast('Paid marks cleared');}
 function setSSrc(src){ssrc=src;document.getElementById('stl').classList.toggle('active',src==='last');document.getElementById('sta').classList.toggle('active',src==='all');renderSettle();}
 function renderSettle(){
  const el=document.getElementById('setbd'),cp=document.getElementById('setcp');if(!el)return;
  if(!sessions.length){el.innerHTML=emp('','Koi session nahi abhi');cp.style.display='none';return;}
- const ss=ssrc==='last'?[sessions[0]]:sessions,bal=compBal(ss),tx=minTx(bal);
+ const ss=ssrc==='last'?[sessions[0]]:sessions,bal=compBal(ss),tx=minTx(bal),scope=settleScope(ss),paidCount=tx.filter(t=>isPaidTx(scope,t)).length,pendingCount=tx.length-paidCount;
  const pot=ss.reduce((s,x)=>s+x.entries.reduce((a,e)=>a+e.buyings,0)*x.buying_rate,0);
- let h=`<div class="sps"><div class="sp"><div class="spv">Rs ${fmt(pot)}</div><div class="spk">Pot</div></div><div class="sp"><div class="spv">${ss.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">${tx.length}</div><div class="spk">Payments</div></div></div><div class="sl">Balances</div>`;
+ let h=`<div class="sps"><div class="sp"><div class="spv">Rs ${fmt(pot)}</div><div class="spk">Pot</div></div><div class="sp"><div class="spv">${ss.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">${pendingCount}</div><div class="spk">Pending</div></div><div class="sp"><div class="spv">${paidCount}</div><div class="spk">Paid</div></div></div><div class="sl">Balances</div>`;
  Object.entries(bal).sort((a,b)=>b[1]-a[1]).forEach(([n,a])=>{const cls=a>0?'pos':a<0?'neg':'zero';h+=`<div class="br"><span class="bn2">${esc(n)}</span><span class="ba ${cls}">${a>0?'+':''}Rs ${fmt(Math.round(a))}</span></div>`;});
  if(!tx.length){h+=`<div class="as">Done: Sab settled!</div>`;cp.style.display='none';}
- else{h+=`<div class="sl" style="margin-top:16px">Payments needed</div>`;tx.forEach((t,i)=>{h+=`<div class="tc" style="animation-delay:${i*60}ms"><span class="tf">${esc(t.from)}</span><span class="ta">-></span><span class="tt2">${esc(t.to)}</span><span class="tam">Rs ${fmt(t.amount)}</span><button class="upi-btn" onclick="openUPI('${esc(t.to)}',${t.amount})">Pay</button></div>`;});cp.style.display='block';}
+ else{h+=`<div class="sl" style="margin-top:16px">Payments needed</div>`;tx.forEach((t,i)=>{const paid=isPaidTx(scope,t);h+=`<div class="tc ${paid?'paid':''}" style="animation-delay:${i*60}ms"><span class="tf">${esc(t.from)}</span><span class="ta">-></span><span class="tt2">${esc(t.to)}</span><span class="tam">Rs ${fmt(t.amount)}</span><button class="upi-btn" onclick="openUPI('${jsq(t.to)}',${t.amount})">Pay</button><button class="paid-btn ${paid?'on':''}" onclick="togglePaid('${jsq(scope)}','${jsq(t.from)}','${jsq(t.to)}',${t.amount})">${paid?'Paid':'Mark Paid'}</button></div>`;});if(paidCount)h+=`<button class="btn bo clear-paid" onclick="clearPaidForScope('${jsq(scope)}')">Clear paid marks</button>`;cp.style.display='block';}
  el.innerHTML=h;
 }
 function copySettle(){
- const ss=ssrc==='last'?[sessions[0]]:sessions,bal=compBal(ss),tx=minTx(bal);
- let t=`S Poker Settle (${ssrc==='last'?'Last Session':'All-time'})\n${'-'.repeat(24)}\n`;
- tx.forEach(x=>{t+=` ${x.from} -> ${x.to}: Rs ${x.amount.toLocaleString('en-IN')}\n`;});
- t+=`${'-'.repeat(24)}\n`;Object.entries(bal).sort((a,b)=>b[1]-a[1]).forEach(([n,a])=>{t+=`${a>=0?'':''} ${n}: ${a>0?'+':''}Rs ${Math.round(a).toLocaleString('en-IN')}\n`;});
+ const ss=ssrc==='last'?[sessions[0]]:sessions,bal=compBal(ss),tx=minTx(bal),scope=settleScope(ss);
+ let t=`S Poker Settle (${ssrc==='last'?'Last Session':'All-time'})
+${'-'.repeat(24)}
+`;
+ tx.forEach(x=>{t+=` [${isPaidTx(scope,x)?'PAID':'PENDING'}] ${x.from} -> ${x.to}: Rs ${x.amount.toLocaleString('en-IN')}
+`;});
+ t+=`${'-'.repeat(24)}
+`;Object.entries(bal).sort((a,b)=>b[1]-a[1]).forEach(([n,a])=>{t+=`${a>=0?'':''} ${n}: ${a>0?'+':''}Rs ${Math.round(a).toLocaleString('en-IN')}
+`;});
  navigator.clipboard.writeText(t).then(()=>toast('Copied! ')).catch(()=>toast('Copy failed'));
 }
 
