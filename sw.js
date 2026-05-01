@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poker-tracker-v4';
+const CACHE_NAME = 'poker-tracker-v7';
 const NEVER_CACHE = ['/index.html', '/', '/sw.js'];
 const CACHE_ONLY = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 const SYNC_TAG = 'poker-session-sync';

@@ -1,20 +1,20 @@
 {
-  "name": "Poker Tracker",
-  "short_name": "Poker",
-  "description": "Track your poker sessions, players, and entries",
-  "start_url": "/",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
-  "scope": "/",
-  "lang": "en",
-  "icons": [
-    {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+    "name":  "PokerBaazi Tracker",
+    "short_name":  "PokerBaazi",
+    "description":  "Premium poker session tracker with settlement, stats, and offline support",
+    "start_url":  "/",
+    "display":  "standalone",
+    "orientation":  "any",
+    "background_color":  "#f7f6f3",
+    "theme_color":  "#c8922a",
+    "scope":  "/",
+    "lang":  "en",
+    "icons":  [
+                  {
+                      "src":  "/favicon.svg",
+                      "sizes":  "any",
+                      "type":  "image/svg+xml",
+                      "purpose":  "any maskable"
+                  }
+              ]
 }
