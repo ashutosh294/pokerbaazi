@@ -362,7 +362,7 @@ body.dark::after{opacity:0.07}
   #sents{padding-bottom:10px}
 }
 
-</style></head><body><div class="app-shell"><div id="loader"><div class="ld-icon">&#9824;</div><div class="ld-title">POKER</div><div class="ld-bar"><div class="ld-prog"></div></div></div><div class="mo" id="lm"><div class="ms"><div class="ll"><div class="lli">&#9824;</div><div class="lln">POKER TRACKER</div></div><div id="lstep1"><div class="msub">Ante up - apna number daalo</div><div class="pw"><div class="pp">+91</div><input class="pi" type="tel" id="phi" maxlength="10" placeholder="10-digit number" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()"></div><div class="le" id="lerr"></div><button class="btn bp bf" onclick="doLogin()" id="lbtn">I'm In &rarr;</button><div style="margin-top:10px;text-align:center"><button class="lob" onclick="viewOnly()">Rail Bird mode &rarr;</button></div></div><div id="lstep2" style="display:none"><div class="msub" id="lstep2name">PIN daalo</div><div class="pdots" id="lpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><div class="ppad" id="lppad"></div><div class="pe" id="lperr"></div><div id="lpin_setup" style="display:none;margin-top:12px;text-align:center"><div style="font-size:12px;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-bottom:8px">Pehli baar hai - apna naya PIN set karo</div></div><button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="backToPhone()">&#8592; Wapas</button></div></div></div><div class="mo" id="pm"><div class="ms"><div class="mh"></div><div class="mt">Admin PIN</div><div class="msub">High roller access ke liye PIN daalo</div><div class="pdots" id="pdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><div class="ppad" id="ppad"></div><div class="pe" id="perr"></div><button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="closePinModal()">Cancel</button></div></div><div id="ob">Offline - cached cards dikhaye ja rahe hain</div><div id="ub"><div><span id="un"></span><span id="urol" style="color:var(--sub);font-size:11px;margin-left:6px"></span></div><button class="lob" onclick="doLogout()">Logout</button></div><div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><button class="dm-btn" id="dmbtn" onclick="toggleDark()" title="Toggle theme">◑ Dark</button><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div><div id="tab-board" class="tab active"><div class="sl">Chip Leaders</div><div class="sps" id="lbs"></div><div id="lbl"></div></div><div id="tab-session" class="tab"><div class="sl">Who is in the game?</div><div class="ptl" id="ptogl"></div><hr class="dv"><div class="ch"><span>Player</span><span>Buy-ins</span><span>Stack &#8377;</span></div><div id="sents"></div><div class="pb"><div><div class="pl">Total Pot</div><div class="ps" id="ptsub"></div></div><div class="pv" id="ptval">&#8377;0</div></div><div class="wb" id="wbox"></div><div class="sbs"><button class="btn bg" onclick="doSave()" id="svbtn">Save Session</button><button class="btn bo" onclick="doReset()">Muck Hand</button></div></div><div id="tab-history" class="tab"><div class="sl">Hand History</div><div style="display:flex;gap:8px;margin-bottom:12px;align-items:center"><input type="text" id="hist-search" class="finp" placeholder=" Player ya date..." style="flex:1;padding:8px 12px;font-size:13px" oninput="renderHist()"></div><div id="histl"></div></div><div id="tab-settle" class="tab"><div class="sl">Chip Settlement</div><div class="sc"><button class="sb active" id="stl" onclick="setSSrc('last')">Last Hand</button><button class="sb" id="sta" onclick="setSSrc('all')">All Time</button></div><div id="setbd"></div><div id="setcp" style="display:none;margin-top:12px"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bo" style="flex:1" onclick="copySettle()">Copy for WhatsApp</button><button class="btn" style="flex:1;background:linear-gradient(135deg,#1a1a2e,#16213e);color:var(--gold);border:1px solid rgba(200,146,42,0.3)" onclick="shareCard()">Share Card</button></div></div></div><canvas id="share-canvas" width="600" height="400"></canvas><div id="tab-stats" class="tab"><div id="str"><div class="sl">Rankings</div><div id="strl"></div><hr class="dv"><div class="sl">P&L Trend</div><div class="gpb" id="gpbtns"></div><div class="gw"><canvas id="pc" height="200"></canvas></div><div class="glr" id="gleg"></div><hr class="dv"><div class="sl"> Head-to-Head</div><div id="h2h-pick" style="margin-bottom:10px"><div style="display:flex;gap:8px;flex-wrap:wrap" id="h2h-btns"></div></div><div id="h2h-result"></div><hr class="dv"><div class="sl">Weekly Report</div><div id="weekly-report"></div><hr class="dv"><div class="sl">Hall of Fame</div><div id="hof-stats"></div></div><div id="stp" style="display:none"><button class="bkb" onclick="showRanking()">&#8592; Rankings</button><div id="stpb"></div></div></div><div id="tab-trash" class="tab"><div class="sl">Muck Pile</div><div class="trseg"><button class="trsb active" id="tts" onclick="setTTab('sessions')">Hands</button><button class="trsb" id="ttp" onclick="setTTab('players')">Players</button></div><div id="trbd"></div></div><div id="tab-more" class="tab"><div id="admsec" style="display:none"><div class="sl">Roster manage karo</div><div class="ar"><input type="text" class="finp" id="npn" placeholder="Player naam..." maxlength="30" style="flex:1"><input type="tel" class="finp" id="npp" placeholder="Phone..." maxlength="10" inputmode="numeric" style="width:130px;flex:none"><button class="btn bg bsm" onclick="doAddP()">Add</button></div><div id="plist"></div><hr class="dv"></div><div class="mo" id="pinresetm"><div class="ms"><div class="mh"></div><div class="mt">PIN Reset</div><div class="msub" id="pinresetname">Player ka PIN reset karo</div><div class="pdots" id="prpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><div class="ppad" id="prppad"></div><div class="pe" id="prperr"></div><div style="font-size:11px;color:var(--sub);text-align:center;margin-top:8px;font-family:'JetBrains Mono',monospace">Naya PIN set karo is player ke liye</div><button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="closePinReset()">Cancel</button></div></div><div class="sl">Table Info</div><div class="bi"><div id="mstats">&#8212;</div><div>Device: <strong id="mdev" style="font-size:10px;word-break:break-all">&#8212;</strong></div></div><div class="sl" style="margin-top:4px">Notifications</div><div style="margin-bottom:14px"><button class="btn bo bf" id="notif-btn" onclick="subscribeNotif()">Enable Notifications</button><div id="notif-status" style="font-size:11px;color:var(--sub);text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace"></div></div><div class="sl" style="margin-top:4px">Backup</div><div style="display:flex;flex-direction:column;gap:8px"><button class="btn bo bf" onclick="expBk()">Export Deck</button><button class="btn bo bf" onclick="document.getElementById('impf').click()">Import Backup</button><input type="file" id="impf" accept=".json" style="display:none" onchange="impBk(this)"><button class="btn bd bf" id="rstbtn" style="display:none" onclick="doRstAll()">Reset All Data</button></div></div><div id="tab-activity" class="tab"><div class="sl">Tell Log <span style="color:var(--dim);font-size:9px">(7 din baad fold)</span></div><div id="actl"></div></div><div id="conf-modal"><div class="conf-box"><div class="conf-icon" id="conf-icon"></div><div class="conf-title" id="conf-title"></div><div class="conf-msg" id="conf-msg"></div><div class="conf-btns"><button class="conf-cancel" id="conf-cancel">Cancel</button><button class="conf-ok" id="conf-ok">Confirm</button></div></div></div><nav class="bn"><button class="nb active" onclick="sw('board')" id="nav-board"><div class="ni">&#127942;</div><div class="nl">Board</div></button><button class="nb" onclick="sw('session')" id="nav-session"><div class="ni">&#127183;</div><div class="nl">Deal</div></button><button class="nb" onclick="sw('history')" id="nav-history"><div class="ni">&#128220;</div><div class="nl">Hands</div></button><button class="nb" onclick="sw('settle')" id="nav-settle"><div class="ni">&#128184;</div><div class="nl">Chips</div></button><button class="nb" onclick="sw('stats')" id="nav-stats"><div class="ni">&#128202;</div><div class="nl">Stats</div></button><button class="nb" onclick="sw('trash')" id="nav-trash"><div class="ni">&#128465;</div><div class="nl">Muck</div></button><button class="nb" onclick="sw('more')" id="nav-more"><div class="ni">&#9881;</div><div class="nl">More</div></button><button class="nb" onclick="sw('activity')" id="nav-activity"><div class="ni">&#128203;</div><div class="nl">Tells</div></button></nav><div class="toast" id="toast"></div></div><script>// == CONFIG == Apni values yahan daalo ==
+</style></head><body><div class="app-shell"><div id="loader"><div class="ld-icon">&#9824;</div><div class="ld-title">POKER</div><div class="ld-bar"><div class="ld-prog"></div></div></div><div class="mo" id="lm"><div class="ms"><div class="ll"><div class="lli">&#9824;</div><div class="lln">POKER TRACKER</div></div><div id="lstep1"><div class="msub">Ante up - apna number daalo</div><div class="pw"><div class="pp">+91</div><input class="pi" type="tel" id="phi" maxlength="10" placeholder="10-digit number" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key==='Enter')doLogin()"></div><div class="le" id="lerr"></div><button class="btn bp bf" onclick="doLogin()" id="lbtn">I'm In &rarr;</button><div style="margin-top:10px;text-align:center"><button class="lob" onclick="viewOnly()">Rail Bird mode &rarr;</button></div></div><div id="lstep2" style="display:none"><div class="msub" id="lstep2name">PIN daalo</div><div class="pdots" id="lpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><div class="ppad" id="lppad"></div><div class="pe" id="lperr"></div><div id="lpin_setup" style="display:none;margin-top:12px;text-align:center"><div style="font-size:12px;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-bottom:8px">Pehli baar hai - apna naya PIN set karo</div></div><button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="backToPhone()">&#8592; Wapas</button></div></div></div><div class="mo" id="pm"><div class="ms"><div class="mh"></div><div class="mt">Admin PIN</div><div class="msub">High roller access ke liye PIN daalo</div><div class="pdots" id="pdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><div class="ppad" id="ppad"></div><div class="pe" id="perr"></div><button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="closePinModal()">Cancel</button></div></div><div id="ob">Offline - cached cards dikhaye ja rahe hain</div><div id="ub"><div><span id="un"></span><span id="urol" style="color:var(--sub);font-size:11px;margin-left:6px"></span></div><button class="lob" onclick="doLogout()">Logout</button></div><div class="topbar"><div class="tbl">&#9824; <span>POKER</span></div><div class="tbr"><button class="dm-btn" id="dmbtn" onclick="toggleDark()" title="Toggle theme">◑ Dark</button><div class="rw"><div class="rl">&#8377;/buy</div><input class="ri" type="number" id="br" value="100" min="1" max="99999" onchange="onRateChange()"></div><div class="sd" id="syd"></div></div></div><div id="tab-board" class="tab active"><div class="sl">Chip Leaders</div><div class="sps" id="lbs"></div><div id="lbl"></div></div><div id="tab-session" class="tab"><div class="sl">Who is in the game?</div><div class="ptl" id="ptogl"></div><hr class="dv"><div class="ch"><span>Player</span><span>Buy-ins</span><span>Stack &#8377;</span></div><div id="sents"></div><div class="pb"><div><div class="pl">Total Pot</div><div class="ps" id="ptsub"></div></div><div class="pv" id="ptval">&#8377;0</div></div><div class="wb" id="wbox"></div><div class="sbs"><button class="btn bg" onclick="doSave()" id="svbtn">Save Session</button><button class="btn bo" onclick="doReset()">Muck Hand</button></div></div><div id="tab-history" class="tab"><div class="sl">Hand History</div><div style="display:flex;gap:8px;margin-bottom:12px;align-items:center"><input type="text" id="hist-search" class="finp" placeholder=" Player ya date..." style="flex:1;padding:8px 12px;font-size:13px" oninput="renderHist()"></div><div id="histl"></div></div><div id="tab-settle" class="tab"><div class="sl">Chip Settlement</div><div class="sc"><button class="sb active" id="stl" onclick="setSSrc('last')">Last Hand</button><button class="sb" id="sta" onclick="setSSrc('all')">All Time</button></div><div id="setbd"></div><div id="setcp" style="display:none;margin-top:12px"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bo" style="flex:1" onclick="copySettle()">Copy for WhatsApp</button><button class="btn" style="flex:1;background:linear-gradient(135deg,#1a1a2e,#16213e);color:var(--gold);border:1px solid rgba(200,146,42,0.3)" onclick="shareCard()">Share Card</button></div></div></div><canvas id="share-canvas" width="600" height="400"></canvas><div id="tab-stats" class="tab"><div id="str"><div class="sl">Rankings</div><div id="strl"></div><hr class="dv"><div class="sl">P&L Trend</div><div class="gpb" id="gpbtns"></div><div class="gw"><canvas id="pc" height="200"></canvas></div><div class="glr" id="gleg"></div><hr class="dv"><div class="sl"> Head-to-Head</div><div id="h2h-pick" style="margin-bottom:10px"><div style="display:flex;gap:8px;flex-wrap:wrap" id="h2h-btns"></div></div><div id="h2h-result"></div><hr class="dv"><div class="sl">Weekly Report</div><div id="weekly-report"></div><hr class="dv"><div class="sl">Hall of Fame</div><div id="hof-stats"></div></div><div id="stp" style="display:none"><button class="bkb" onclick="showRanking()">&#8592; Rankings</button><div id="stpb"></div></div></div><div id="tab-trash" class="tab"><div class="sl">Muck Pile</div><div class="trseg"><button class="trsb active" id="tts" onclick="setTTab('sessions')">Hands</button><button class="trsb" id="ttp" onclick="setTTab('players')">Players</button></div><div id="trbd"></div></div><div id="tab-more" class="tab"><div id="admsec" style="display:none"><div class="sl">Roster manage karo</div><div class="ar"><input type="text" class="finp" id="npn" placeholder="Player naam..." maxlength="30" style="flex:1"><input type="tel" class="finp" id="npp" placeholder="Phone..." maxlength="10" inputmode="numeric" style="width:130px;flex:none"><button class="btn bg bsm" onclick="doAddP()">Add</button></div><div id="plist"></div><hr class="dv"></div><div class="mo" id="pinresetm"><div class="ms"><div class="mh"></div><div class="mt">PIN Reset</div><div class="msub" id="pinresetname">Player ka PIN reset karo</div><div class="pdots" id="prpdots"><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><div class="ppad" id="prppad"></div><div class="pe" id="prperr"></div><div style="font-size:11px;color:var(--sub);text-align:center;margin-top:8px;font-family:'JetBrains Mono',monospace">Naya PIN set karo is player ke liye</div><button class="lob" style="display:block;text-align:center;margin-top:14px;width:100%" onclick="closePinReset()">Cancel</button></div></div><div class="sl">Table Info</div><div class="bi"><div id="mstats">&#8212;</div><div>Device: <strong id="mdev" style="font-size:10px;word-break:break-all">&#8212;</strong></div></div><div class="sl" style="margin-top:4px">Notifications</div><div style="margin-bottom:14px"><button class="btn bo bf" id="notif-btn" onclick="subscribeNotif()">Enable Notifications</button><div id="notif-status" style="font-size:11px;color:var(--sub);text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace"></div></div><div class="sl" style="margin-top:4px">Backup</div><div style="display:flex;flex-direction:column;gap:8px"><button class="btn bo bf" onclick="expBk()">Export Deck</button><button class="btn bo bf" onclick="document.getElementById('impf').click()">Import Backup</button><input type="file" id="impf" accept=".json" style="display:none" onchange="impBk(this)"><button class="btn bd bf" id="rstbtn" style="display:none" onclick="doRstAll()">Reset All Data</button></div></div><div id="tab-activity" class="tab"><div class="sl">Tell Log <span style="color:var(--dim);font-size:9px">(7 din baad fold)</span></div><div id="actl"></div></div><div id="tab-rules" class="tab"><div class="sl">Hand Rankings</div><div id="rules-hands"></div><hr class="dv"><div class="sl">Betting Rules</div><div id="rules-betting"></div><hr class="dv"><div class="sl">Table Rules <span style="color:var(--dim);font-size:9px">(Hamare ghar ke niyam)</span></div><div id="rules-custom"></div><div id="rules-admin" style="display:none;margin-top:12px"><div style="display:flex;gap:8px;align-items:flex-start"><textarea class="finp" id="rule-input" placeholder="Naya rule likho..." maxlength="200" rows="2" style="flex:1;resize:none"></textarea><button class="btn bg bsm" onclick="addRule()" style="flex-shrink:0;align-self:flex-end">Add</button></div></div></div><div id="conf-modal"><div class="conf-box"><div class="conf-icon" id="conf-icon"></div><div class="conf-title" id="conf-title"></div><div class="conf-msg" id="conf-msg"></div><div class="conf-btns"><button class="conf-cancel" id="conf-cancel">Cancel</button><button class="conf-ok" id="conf-ok">Confirm</button></div></div></div><nav class="bn"><button class="nb active" onclick="sw('board')" id="nav-board"><div class="ni">&#127942;</div><div class="nl">Board</div></button><button class="nb" onclick="sw('session')" id="nav-session"><div class="ni">&#127183;</div><div class="nl">Deal</div></button><button class="nb" onclick="sw('history')" id="nav-history"><div class="ni">&#128220;</div><div class="nl">Hands</div></button><button class="nb" onclick="sw('settle')" id="nav-settle"><div class="ni">&#128184;</div><div class="nl">Chips</div></button><button class="nb" onclick="sw('stats')" id="nav-stats"><div class="ni">&#128202;</div><div class="nl">Stats</div></button><button class="nb" onclick="sw('trash')" id="nav-trash"><div class="ni">&#128465;</div><div class="nl">Muck</div></button><button class="nb" onclick="sw('more')" id="nav-more"><div class="ni">&#9881;</div><div class="nl">More</div></button><button class="nb" onclick="sw('activity')" id="nav-activity"><div class="ni">&#128203;</div><div class="nl">Tells</div></button><button class="nb" onclick="sw('rules')" id="nav-rules"><div class="ni">&#127137;</div><div class="nl">Rules</div></button></nav><div class="toast" id="toast"></div></div><script>// == CONFIG == Apni values yahan daalo ==
 const SB_URL = 'https://ysooqusetyjvoxggizcv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzb29xdXNldHlqdm94Z2dpemN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5ODc2NzAsImV4cCI6MjA5MTU2MzY3MH0.uhhGCJpoUmZewLY9n198a-ehuu5F0kGwsXnxApG1W_Q';
 const ADMIN_PIN = '2025'; // <- Apna PIN yahan set karo
@@ -623,6 +623,7 @@ function sw(name){
  else if(name==='trash')renderTrash();
  else if(name==='more')renderMore();
  else if(name==='activity')renderActivity();
+ else if(name==='rules')renderRules();
  else if(name==='board')renderBoard();
 }
 function renderAll(){
@@ -635,6 +636,7 @@ function renderAll(){
  else if(_activeTab==='trash')renderTrash();
  else if(_activeTab==='more')renderMore();
  else if(_activeTab==='activity')renderActivity();
+ else if(_activeTab==='rules')renderRules();
  updTrashBadge();
 }
 let _rateTimer=null;
@@ -738,80 +740,25 @@ function minTx(bal){
  pos.sort((a,b)=>b.amt-a.amt);neg.sort((a,b)=>b.amt-a.amt);
  const tx=[];let i=0,j=0;while(i<neg.length&&j<pos.length){const d=neg[i],c=pos[j],a=Math.min(d.amt,c.amt);if(a>0)tx.push({from:d.name,to:c.name,amount:a});d.amt-=a;c.amt-=a;if(d.amt===0)i++;if(c.amt===0)j++;}return tx;
 }
-// -- SETTLE PAID (Supabase synced) --
-let _settlePaid = {}; // cache: scope -> { key -> {is_paid, marked_by} }
-
+const SETTLE_PAID_KEY='pk_settle_paid_v1';
+function jsq(v){return String(v??'').split('\\').join('\\\\').split("'").join("\\'").replace(/[\r\n]+/g,' ');}
+function paidStore(){try{return JSON.parse(localStorage.getItem(SETTLE_PAID_KEY)||'{}')||{};}catch(e){return {};}}
+function savePaidStore(m){localStorage.setItem(SETTLE_PAID_KEY,JSON.stringify(m));}
 function settleScope(ss){return ssrc==='last'?`last:${ss[0]?.id||'none'}`:`all:${sessions[0]?.id||'none'}:${sessions.length}`;}
 function paidKey(scope,t){return `${scope}|${t.from}|${t.to}|${Math.round(t.amount)}`;}
-function isPaidTx(scope,t){return !!(_settlePaid[scope]?.[paidKey(scope,t)]?.is_paid);}
-function paidBy(scope,t){return _settlePaid[scope]?.[paidKey(scope,t)]?.marked_by||'';}
-
-function jsq(v){return String(v??'').split('\\').join('\\\\').split("'").join("\\'").replace(/[\r\n]+/g,' ');}
-
-async function loadSettlements(scope){
-  try{
-    const enc=encodeURIComponent(scope);
-    const rows=await sb.get(`poker_settlements?scope=eq.${enc}&select=*`);
-    _settlePaid[scope]={};
-    (rows||[]).forEach(r=>{
-      const k=`${r.scope}|${r.from_player}|${r.to_player}|${r.amount}`;
-      _settlePaid[scope][k]={is_paid:r.is_paid,marked_by:r.marked_by||''};
-    });
-  }catch(e){console.warn('Settlement load failed',e);}
-}
-
-async function togglePaid(scope,from,to,amount){
-  const k=paidKey(scope,{from,to,amount});
-  if(!_settlePaid[scope])_settlePaid[scope]={};
-  const cur=_settlePaid[scope][k]?.is_paid||false;
-  const newVal=!cur;
-  // Optimistic update
-  _settlePaid[scope][k]={is_paid:newVal,marked_by:cu?.name||'Member'};
-  renderSettle();
-  try{
-    await sb.rpc('toggle_settlement_paid',{
-      p_scope:scope,p_from_player:from,p_to_player:to,
-      p_amount:amount,p_is_paid:newVal,p_marked_by:cu?.name||'Member'
-    });
-    toast(newVal?'✓ Paid mark ho gaya':'↩ Pending kar diya');
-  }catch(e){
-    // Revert on error
-    _settlePaid[scope][k]={is_paid:cur,marked_by:''};
-    renderSettle();
-    toast('Error: '+e.message);
-  }
-}
-
-async function clearPaidForScope(scope){
-  const rows=Object.entries(_settlePaid[scope]||{}).filter(([,v])=>v.is_paid);
-  if(!rows.length)return;
-  // Optimistic
-  rows.forEach(([k])=>{if(_settlePaid[scope][k])_settlePaid[scope][k].is_paid=false;});
-  renderSettle();
-  try{
-    await Promise.all(rows.map(([k])=>{
-      const parts=k.split('|');
-      return sb.rpc('toggle_settlement_paid',{
-        p_scope:parts[0],p_from_player:parts[1],p_to_player:parts[2],
-        p_amount:parseInt(parts[3]),p_is_paid:false,p_marked_by:cu?.name||'Member'
-      });
-    }));
-    toast('Paid marks cleared');
-  }catch(e){toast('Error: '+e.message);}
-}
+function isPaidTx(scope,t){return !!paidStore()[paidKey(scope,t)];}
+function togglePaid(scope,from,to,amount){const m=paidStore(),k=paidKey(scope,{from,to,amount});m[k]=!m[k];if(!m[k])delete m[k];savePaidStore(m);renderSettle();toast(m[k]?'Marked paid':'Marked pending');}
+function clearPaidForScope(scope){const m=paidStore(),pre=`${scope}|`;Object.keys(m).forEach(k=>{if(k.startsWith(pre))delete m[k];});savePaidStore(m);renderSettle();toast('Paid marks cleared');}
 function setSSrc(src){ssrc=src;document.getElementById('stl').classList.toggle('active',src==='last');document.getElementById('sta').classList.toggle('active',src==='all');renderSettle();}
-async function renderSettle(){
+function renderSettle(){
  const el=document.getElementById('setbd'),cp=document.getElementById('setcp');if(!el)return;
  if(!sessions.length){el.innerHTML=emp('','Koi session nahi abhi');cp.style.display='none';return;}
- const ss=ssrc==='last'?[sessions[0]]:sessions,bal=compBal(ss),tx=minTx(bal),scope=settleScope(ss);
- // Load from Supabase if not cached
- if(!_settlePaid[scope])await loadSettlements(scope);
- const paidCount=tx.filter(t=>isPaidTx(scope,t)).length,pendingCount=tx.length-paidCount;
+ const ss=ssrc==='last'?[sessions[0]]:sessions,bal=compBal(ss),tx=minTx(bal),scope=settleScope(ss),paidCount=tx.filter(t=>isPaidTx(scope,t)).length,pendingCount=tx.length-paidCount;
  const pot=ss.reduce((s,x)=>s+x.entries.reduce((a,e)=>a+e.buyings,0)*x.buying_rate,0);
  let h=`<div class="sps"><div class="sp"><div class="spv">Rs ${fmt(pot)}</div><div class="spk">Pot</div></div><div class="sp"><div class="spv">${ss.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">${pendingCount}</div><div class="spk">Pending</div></div><div class="sp"><div class="spv">${paidCount}</div><div class="spk">Paid</div></div></div><div class="sl">Balances</div>`;
  Object.entries(bal).sort((a,b)=>b[1]-a[1]).forEach(([n,a])=>{const cls=a>0?'pos':a<0?'neg':'zero';h+=`<div class="br"><span class="bn2">${esc(n)}</span><span class="ba ${cls}">${a>0?'+':''}Rs ${fmt(Math.round(a))}</span></div>`;});
  if(!tx.length){h+=`<div class="as">Done: Sab settled!</div>`;cp.style.display='none';}
- else{h+=`<div class="sl" style="margin-top:16px">Payments needed</div>`;tx.forEach((t,i)=>{const paid=isPaidTx(scope,t),by=paidBy(scope,t);h+=`<div class="tc ${paid?'paid':''}" style="animation-delay:${i*60}ms"><span class="tf">${esc(t.from)}</span><span class="ta">→</span><span class="tt2">${esc(t.to)}</span><span class="tam">Rs ${fmt(t.amount)}</span>${paid&&by?`<span style="font-size:10px;color:var(--green);font-family:'JetBrains Mono',monospace;width:100%;text-align:center">✓ ${esc(by)} ne mark kiya</span>`:''}<button class="upi-btn" onclick="openUPI('${jsq(t.to)}',${t.amount})">Pay</button><button class="paid-btn ${paid?'on':''}" onclick="togglePaid('${jsq(scope)}','${jsq(t.from)}','${jsq(t.to)}',${t.amount})">${paid?'Paid':'Mark Paid'}</button></div>`;});if(paidCount)h+=`<button class="btn bo clear-paid" onclick="clearPaidForScope('${jsq(scope)}')">Clear paid marks</button>`;cp.style.display='block';}
+ else{h+=`<div class="sl" style="margin-top:16px">Payments needed</div>`;tx.forEach((t,i)=>{const paid=isPaidTx(scope,t);h+=`<div class="tc ${paid?'paid':''}" style="animation-delay:${i*60}ms"><span class="tf">${esc(t.from)}</span><span class="ta">-></span><span class="tt2">${esc(t.to)}</span><span class="tam">Rs ${fmt(t.amount)}</span><button class="upi-btn" onclick="openUPI('${jsq(t.to)}',${t.amount})">Pay</button><button class="paid-btn ${paid?'on':''}" onclick="togglePaid('${jsq(scope)}','${jsq(t.from)}','${jsq(t.to)}',${t.amount})">${paid?'Paid':'Mark Paid'}</button></div>`;});if(paidCount)h+=`<button class="btn bo clear-paid" onclick="clearPaidForScope('${jsq(scope)}')">Clear paid marks</button>`;cp.style.display='block';}
  el.innerHTML=h;
 }
 function copySettle(){
@@ -1013,9 +960,8 @@ async function renderActivity(){
 function setupRT(){
  if(!SB_URL)return;
  const ws=new WebSocket(SB_URL.replace('https://','wss://')+'/realtime/v1/websocket?apikey='+SB_KEY+'&vsn=1.0.0');
- ws.onopen=()=>{ws.send(JSON.stringify({topic:'realtime:poker',event:'phx_join',payload:{config:{broadcast:{self:false},postgres_changes:[{event:'*',schema:'public',table:'poker_sessions'},{event:'*',schema:'public',table:'poker_entries'},{event:'*',schema:'public',table:'poker_players'},{event:'*',schema:'public',table:'poker_settlements'}]}},ref:'1'}));setSync('on');};
- ws.onmessage=async msg=>{const d=JSON.parse(msg.data);if(d.event==='heartbeat'){ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:null}));return;}if(d.event==='postgres_changes'||d.payload?.data){const self=(Date.now()-lst)<3000;const tbl=d.payload?.data?.table||'';if(tbl==='poker_settlements'){// Clear settlement cache and re-render if on settle tab
-_settlePaid={};if(_activeTab==='settle')renderSettle();return;}await loadAll();renderAll();updTrashBadge();if(!self)toast('🃏 New cards dealt!');}};
+ ws.onopen=()=>{ws.send(JSON.stringify({topic:'realtime:poker',event:'phx_join',payload:{config:{broadcast:{self:false},postgres_changes:[{event:'*',schema:'public',table:'poker_sessions'},{event:'*',schema:'public',table:'poker_entries'},{event:'*',schema:'public',table:'poker_players'}]}},ref:'1'}));setSync('on');};
+ ws.onmessage=async msg=>{const d=JSON.parse(msg.data);if(d.event==='heartbeat'){ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:null}));return;}if(d.event==='postgres_changes'||d.payload?.data){const self=(Date.now()-lst)<3000;await loadAll();renderAll();updTrashBadge();if(!self)toast(' New cards dealt!');}};
  ws.onclose=()=>{setSync('');setTimeout(setupRT,3000);};ws.onerror=()=>ws.close();
 }
 
@@ -1326,6 +1272,111 @@ function showConfirm({icon='Warning:', title='Confirm karo', msg='', okText='Con
  });
 }
 
+// -- RULES ------------------------------------------------
+const HAND_RANKINGS = [
+  { rank: 1, name: 'Royal Flush', emoji: '👑', desc: 'A K Q J 10 — same suit', example: '🂡🂾🂽🂼🂻' },
+  { rank: 2, name: 'Straight Flush', emoji: '🔥', desc: '5 consecutive cards — same suit', example: '9 8 7 6 5 ♠' },
+  { rank: 3, name: 'Four of a Kind', emoji: '💥', desc: '4 cards same rank', example: 'K K K K 2' },
+  { rank: 4, name: 'Full House', emoji: '🏠', desc: '3 of a kind + a pair', example: 'Q Q Q J J' },
+  { rank: 5, name: 'Flush', emoji: '♠', desc: '5 cards same suit (any)', example: 'A J 9 6 3 ♥' },
+  { rank: 6, name: 'Straight', emoji: '📈', desc: '5 consecutive cards (any suit)', example: '10 9 8 7 6' },
+  { rank: 7, name: 'Three of a Kind', emoji: '3️⃣', desc: '3 cards same rank', example: '7 7 7 K 2' },
+  { rank: 8, name: 'Two Pair', emoji: '2️⃣', desc: '2 different pairs', example: 'A A 9 9 K' },
+  { rank: 9, name: 'One Pair', emoji: '1️⃣', desc: '2 cards same rank', example: 'J J 8 5 2' },
+  { rank: 10, name: 'High Card', emoji: '🃏', desc: 'Koi combination nahi — highest card wins', example: 'A K 9 6 2' },
+];
+
+const BETTING_RULES = [
+  { term: 'Blind', desc: 'Forced bets before cards — Small Blind & Big Blind table ke left se' },
+  { term: 'Check', desc: 'Bet nahi karna — sirf tab jab koi bet nahi hua is round mein' },
+  { term: 'Call', desc: 'Current bet ke barabar chips lagana' },
+  { term: 'Raise', desc: 'Current bet se zyada chips lagana' },
+  { term: 'Fold', desc: 'Hand surrender karna — is round ke sab chips lose' },
+  { term: 'All-In', desc: 'Apne saare chips lagana — side pot rules apply hote hain' },
+  { term: 'Pre-Flop', desc: '2 hole cards milne ke baad — pehli betting round' },
+  { term: 'Flop', desc: 'Table pe 3 cards open hote hain — doosri betting round' },
+  { term: 'Turn', desc: 'Table pe 4th card — teesri betting round' },
+  { term: 'River', desc: 'Table pe 5th aur last card — final betting round' },
+  { term: 'Showdown', desc: 'River ke baad remaining players apne cards dikhate hain — best 5 card hand wins' },
+];
+
+let _customRules = [];
+
+async function loadRules() {
+  try {
+    const rows = await sb.get('poker_rules?order=created_at.asc&select=*');
+    _customRules = rows || [];
+  } catch(e) { _customRules = []; }
+}
+
+async function addRule() {
+  if (!isAdm) { toast('Sirf admin rules add kar sakta hai'); return; }
+  const inp = document.getElementById('rule-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  try {
+    await sb.post('poker_rules', { rule_text: text, created_by: cu?.name || 'Admin' });
+    inp.value = '';
+    await loadRules();
+    renderRules();
+    toast('✓ Rule add ho gaya');
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+async function deleteRule(id) {
+  if (!isAdm) return;
+  try {
+    await sb.del(`poker_rules?id=eq.${id}`);
+    await loadRules();
+    renderRules();
+    toast('Rule hata diya');
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+async function renderRules() {
+  // Hand rankings
+  const handsEl = document.getElementById('rules-hands'); if (!handsEl) return;
+  handsEl.innerHTML = HAND_RANKINGS.map(h => `
+    <div class="lbr zero" style="animation-delay:${h.rank*30}ms;flex-direction:column;align-items:flex-start;gap:4px">
+      <div style="display:flex;align-items:center;gap:10px;width:100%">
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--gold);min-width:20px">#${h.rank}</span>
+        <span style="font-size:15px">${h.emoji}</span>
+        <span style="font-weight:700;flex:1">${h.name}</span>
+      </div>
+      <div style="font-size:12px;color:var(--sub);padding-left:30px">${h.desc}</div>
+      <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--dim);padding-left:30px">${h.example}</div>
+    </div>`).join('');
+
+  // Betting rules
+  const betEl = document.getElementById('rules-betting'); if (!betEl) return;
+  betEl.innerHTML = BETTING_RULES.map(b => `
+    <div class="br" style="padding:10px 12px;margin-bottom:5px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs)">
+      <span style="font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--gold);min-width:80px">${b.term}</span>
+      <span style="font-size:12px;color:var(--sub);flex:1;text-align:right">${b.desc}</span>
+    </div>`).join('');
+
+  // Custom rules
+  const custEl = document.getElementById('rules-custom'); if (!custEl) return;
+  if (!_customRules.length) {
+    custEl.innerHTML = `<div class="hint" style="padding:16px 0">Koi custom rules nahi abhi${isAdm ? ' — neeche add karo' : ''}</div>`;
+  } else {
+    custEl.innerHTML = _customRules.map((r,i) => `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:6px;animation:fu 0.3s ease both;animation-delay:${i*50}ms">
+        <span style="color:var(--gold);font-size:14px;margin-top:1px">•</span>
+        <span style="flex:1;font-size:13px;line-height:1.5">${esc(r.rule_text)}</span>
+        ${isAdm ? `<button class="ib danger" onclick="deleteRule('${r.id}')" style="font-size:13px;flex-shrink:0">✕</button>` : ''}
+      </div>`).join('');
+  }
+
+  // Show admin add form
+  const admEl = document.getElementById('rules-admin');
+  if (admEl) admEl.style.display = isAdm ? 'block' : 'none';
+
+  if (!_customRules.length) await loadRules().then(() => {
+    if (_customRules.length) renderRules();
+  });
+}
+
 document.addEventListener('visibilitychange',()=>{
  if(document.visibilityState==='visible'&&cu){
  const la=parseInt(localStorage.getItem(LAST_ACTIVE_KEY)||'0');
@@ -1345,7 +1396,7 @@ async function init(){
  if(!authed){document.getElementById('lm').classList.add('show');document.getElementById('phi').focus();}
  setupRT();
 
- const _tabOrder=['board','session','history','settle','stats','more','activity'];
+ const _tabOrder=['board','session','history','settle','stats','more','activity','rules'];
  let _tx=0,_ty=0;
  document.addEventListener('touchstart',e=>{_tx=e.touches[0].clientX;_ty=e.touches[0].clientY;},{passive:true});
  document.addEventListener('touchend',e=>{
