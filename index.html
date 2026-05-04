@@ -409,7 +409,7 @@ async function loadAll(){
  const [pl,rs,en,st]=await Promise.all([
  sb.get('poker_players?order=created_at.asc&select=id,name,phone,is_active,is_admin,created_at&deleted_at=is.null'),
  sb.get('poker_sessions?order=played_at.desc&select=id,played_at,buying_rate,saved_by&limit=200&deleted_at=is.null'),
- sb.get('poker_entries?select=session_id,player_name,buyings,result'),
+ sb.get('poker_entries?select=session_id,player_name,buy-ins,result'),
  sb.get('player_stats_cache?select=*'),
  ]);
  players=pl||[];pStats=st||[];
@@ -659,7 +659,7 @@ function renderBoard(){
  sum.innerHTML=`<div class="sp"><div class="spv">${sessions.length}</div><div class="spk">Sessions</div></div><div class="sp"><div class="spv">Rs ${fmt(tp)}</div><div class="spk">Total pot</div></div><div class="sp"><div class="spv">${players.length}</div><div class="spk">Players</div></div>`;
  if(!pStats.length){el.innerHTML=emp('','No hands played yet. Deal em up!');return;}
  const s=[...pStats].sort((a,b)=>Number(b.net_profit)-Number(a.net_profit));
- el.innerHTML=s.map((x,i)=>{const net=Number(x.net_profit),cls=net>0?'pos':net<0?'neg':'zero',sg=net>0?'+':'';const md=`#${i+1}`;return`<div class="lbr ${cls}" style="animation-delay:${i*50}ms"><div class="lrk">${md}</div><div class="li"><div class="ln">${esc(x.name)}</div><div class="lm">${x.total_sessions} sessions - ${x.total_buyings} buyings</div></div><div class="lnet ${cls}">${sg}Rs ${fmt(Math.abs(net))}</div></div>`;}).join('');
+ el.innerHTML=s.map((x,i)=>{const net=Number(x.net_profit),cls=net>0?'pos':net<0?'neg':'zero',sg=net>0?'+':'';const md=`#${i+1}`;return`<div class="lbr ${cls}" style="animation-delay:${i*50}ms"><div class="lrk">${md}</div><div class="li"><div class="ln">${esc(x.name)}</div><div class="lm">${x.total_sessions} sessions - ${x.total_buyings} buy-ins</div></div><div class="lnet ${cls}">${sg}Rs ${fmt(Math.abs(net))}</div></div>`;}).join('');
 }
 
 function renderSess(){renderToggs();renderEnts();}
@@ -680,7 +680,7 @@ function renderEnts(){
  if(!sess.a.length){el.innerHTML=`<div class="hint" style="padding:24px 0">Players select karo above</div>`;document.getElementById('ptval').textContent='Rs 0';document.getElementById('ptsub').textContent='';document.getElementById('wbox').style.display='none';return;}
  el.innerHTML=sess.a.map(p=>{const b=sess.b[p]||0,r=sess.r[p]!==undefined?sess.r[p]:'',ep=esc(p);return`<div class="er"><div class="en">${ep}</div><div class="bc"><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,-1)">-</button><span class="bct" id="bc-${ep}">${b}</span><button class="bb" data-n="${ep}" onclick="chgB(this.dataset.n,1)">+</button></div><input class="ri2" type="text" inputmode="decimal" id="res-${ep}" value="${r}" placeholder="+/-Rs " oninput="onRq('${ep}',this.value)" onblur="renderEnts()"></div>`;}).join('');
  const tot=sess.a.reduce((s,p)=>s+(sess.b[p]||0),0);
- document.getElementById('ptval').textContent=`Rs ${fmt(tot*rate)}`;document.getElementById('ptsub').textContent=`${tot} buyings x Rs ${rate}`;
+ document.getElementById('ptval').textContent=`Rs ${fmt(tot*rate)}`;document.getElementById('ptsub').textContent=`${tot} buy-ins x Rs ${rate}`;
  const af=sess.a.length>0&&sess.a.every(p=>sess.r[p]!==''&&sess.r[p]!==undefined);
  const wb=document.getElementById('wbox');
  if(af){const sum=sess.a.reduce((s,p)=>s+Number(sess.r[p]||0),0);if(Math.abs(sum)>1){wb.style.display='block';wb.textContent=`Warning: Sum = Rs ${sum} (Rs 0 hona chahiye)`;}else wb.style.display='none';}else wb.style.display='none';
@@ -794,7 +794,7 @@ function renderPStat(name){
  let streak=0;for(const r of rev){if((r>0&&sT==='W')||(r<0&&sT==='L'))streak++;else break;}
  const dots=res.slice(-10).map(r=>r>0?'<div class="dot win"></div>':r<0?'<div class="dot loss"></div>':'<div class="dot push"></div>').join('');
  const nc=net>0?'pos':net<0?'neg':'zero',ac=avg>0?'pos':avg<0?'neg':'zero',sg=v=>v>0?'+':'';
- el.innerHTML=`<div class="ph"><div class="pt">${esc(name)}</div><div class="psub">Individual stats</div></div><div class="sgrid"><div class="scard full ${nc}"><div class="sv ${nc}">${sg(net)}Rs ${fmt(Math.abs(net))}</div><div class="sk">All-time net</div></div><div class="scard"><div class="sv gold">${wr}%</div><div class="sk">Win rate</div></div><div class="scard"><div class="sv">${n}</div><div class="sk">Sessions</div></div><div class="scard"><div class="sv ${ac}">${sg(avg)}Rs ${fmt(Math.abs(avg))}</div><div class="sk">Avg/session</div></div><div class="scard"><div class="sv">${n>0?(buy/n).toFixed(1):0}</div><div class="sk">Avg buyings</div></div><div class="scard"><div class="sv pos">+Rs ${fmt(bw)}</div><div class="sk">Best session</div></div><div class="scard"><div class="sv neg">Rs ${fmt(Math.abs(bl))}</div><div class="sk">Worst session</div></div><div class="scard"><div class="sv">${wins}W - ${losses}L</div><div class="sk">Record</div></div><div class="scard"><div class="sv ${sT==='W'?'pos':'neg'}">${streak}${sT==='W'?' ':' L'}</div><div class="sk">Streak</div></div></div><div class="sl" style="margin-top:16px">Last 10 sessions</div><div class="dr">${dots}</div>`;
+ el.innerHTML=`<div class="ph"><div class="pt">${esc(name)}</div><div class="psub">Individual stats</div></div><div class="sgrid"><div class="scard full ${nc}"><div class="sv ${nc}">${sg(net)}Rs ${fmt(Math.abs(net))}</div><div class="sk">All-time net</div></div><div class="scard"><div class="sv gold">${wr}%</div><div class="sk">Win rate</div></div><div class="scard"><div class="sv">${n}</div><div class="sk">Sessions</div></div><div class="scard"><div class="sv ${ac}">${sg(avg)}Rs ${fmt(Math.abs(avg))}</div><div class="sk">Avg/session</div></div><div class="scard"><div class="sv">${n>0?(buy/n).toFixed(1):0}</div><div class="sk">Avg buy-ins</div></div><div class="scard"><div class="sv pos">+Rs ${fmt(bw)}</div><div class="sk">Best session</div></div><div class="scard"><div class="sv neg">Rs ${fmt(Math.abs(bl))}</div><div class="sk">Worst session</div></div><div class="scard"><div class="sv">${wins}W - ${losses}L</div><div class="sk">Record</div></div><div class="scard"><div class="sv ${sT==='W'?'pos':'neg'}">${streak}${sT==='W'?' ':' L'}</div><div class="sk">Streak</div></div></div><div class="sl" style="margin-top:16px">Last 10 sessions</div><div class="dr">${dots}</div>`;
 }
 function renderGraph(){
  const btns=document.getElementById('gpbtns'),leg=document.getElementById('gleg'),cv=document.getElementById('pc');if(!btns||!cv)return;
@@ -831,7 +831,7 @@ async function renderTrash(){
  const rows=await sb.get('poker_sessions?deleted_at=not.is.null&order=deleted_at.desc&select=id,played_at,buying_rate,saved_by,deleted_at,deleted_by');
  if(!rows?.length){el.innerHTML=emp('','Trash khali hai');return;}
  const ids=rows.map(r=>r.id).join(',');
- const ents=await sb.get(`poker_entries?session_id=in.(${ids})&select=session_id,player_name,buyings,result`);
+ const ents=await sb.get(`poker_entries?session_id=in.(${ids})&select=session_id,player_name,buy-ins,result`);
  const em={};(ents||[]).forEach(e=>{if(!em[e.session_id])em[e.session_id]=[];em[e.session_id].push(e);});
  el.innerHTML=rows.map((s,i)=>{
  const d=new Date(s.played_at),ds=d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
